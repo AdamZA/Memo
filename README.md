@@ -15,18 +15,29 @@ nvm use 24
 node -v   # Expect v24.11.0
 ```
 
-### Prettier, pre-push hooks
+### Prettier, pre-commit and pre-push hooks
 
-Run npm run prepare to give permissions to pre-push hook for prettier and test runs:
+There are 2 git hooks set up for this repo:
+pre-commit hook: runs prettier check against your code
+pre-push hook: runs typechecks and unit tests for the repo
+
+Run npm run prepare to give permissions to pre-commit and pre-push hooks
 
 ```bash
 npm run prepare
 ```
 
-Pre-push hook added to run npm run tests + run npm run prettier commands
+To run prettier:
 
 ```bash
 npm run format
+```
+
+If you want to commit WIP work without triggering the pre-commit and pre-push hooks
+
+```bash
+git commit --no-verify -m "commit message"
+git push --no-verify
 ```
 
 ## Running tests
