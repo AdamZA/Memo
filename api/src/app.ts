@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 
 export function createApp() {
@@ -10,7 +10,7 @@ export function createApp() {
   app.get('/health', (_req, res) => res.json({ ok: true }));
 
   // error handler placeholder
-  app.use((err: any, _req: any, res: any, _next: any) => {
+  app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error' });
   });
