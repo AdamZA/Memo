@@ -1,7 +1,7 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "",
+  "description": "API Server for memo service - built to handle CRUD operations leveraging Express.js",
   "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {
