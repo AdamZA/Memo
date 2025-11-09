@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# change to typecheck:all and run test:all once web scaffolded
+npx lint-staged && npm run typecheck:api && npm run test:api
