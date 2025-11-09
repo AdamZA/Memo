@@ -1,0 +1,31 @@
+{
+  "name": "paystack-practical",
+  "private": true,
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace api run dev",
+    "dev:web": "npm --workspace web run dev",
+    "build:api": "npm --workspace api run build",
+    "build:web": "npm --workspace web run build",
+    "test:api": "npm --workspace api run test",
+    "test:web": "npm --workspace web run test",
+    "test:all": "npm run test:api && npm run test:web",
+    "prepare": "chmod +x .husky/* || true",
+    "format": "prettier -w .",
+    "format:check": "prettier -c .",
+    "typecheck:api": "npm --workspace api run typecheck",
+    "typecheck:web": "npm --workspace web run typecheck",
+    "typecheck:all": "npm run typecheck:api && npm run typecheck:web"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,md,css}": "prettier -c"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2"
+  }
+}
