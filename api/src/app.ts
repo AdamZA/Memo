@@ -18,8 +18,8 @@ export function createApp() {
 
   // Handling of poor requests and error states
   app.use(badJson);
-
   app.use(notFound);
+
   // General, catch-all error handler
   app.use(generalError);
 
