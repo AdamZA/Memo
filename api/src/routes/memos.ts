@@ -10,9 +10,9 @@ import { methodNotAllowed } from '../middleware/errors';
 
 const router = Router();
 
-router.get('/', listMemos); //default get path
+router.get('/', listMemos); // Default get path
 router.get('/:id', getMemoById);
-router.post('/', createMemo); //default post path
+router.post('/', createMemo); // Default post path
 router.put('/:id', updateMemo);
 router.delete('/:id', deleteMemo);
 
