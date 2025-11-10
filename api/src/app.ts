@@ -17,11 +17,9 @@ export function createApp() {
   app.use('/memos', memosRouter);
 
   // Handling of poor requests and error states
-  app.use(notFound);
-
-  // 400 responses for bad JSON
   app.use(badJson);
 
+  app.use(notFound);
   // General, catch-all error handler
   app.use(generalError);
 
