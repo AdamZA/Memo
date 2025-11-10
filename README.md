@@ -4,15 +4,10 @@ Full-stack Memo Application using React/React Query/Express.js/Rest, as a part o
 
 ## Environment Setup
 
-Project developed using **Node v24.11.0 (LTS, 2025-11-09)**.  
-Please use **nvm** for Node version management to ensure consistent runtime behaviour.
-
-### Install Node 24 (if not already available)
+### Install dependencies
 
 ```bash
-nvm install 24
-nvm use 24
-node -v   # Expect v24.11.0
+npm install
 ```
 
 ### Prettier, pre-commit and pre-push hooks
@@ -21,7 +16,7 @@ There are 2 git hooks set up for this repo:
 pre-commit hook: runs prettier check against your code
 pre-push hook: runs typechecks and unit tests for the repo
 
-Run npm run prepare to give permissions to pre-commit and pre-push hooks
+Use `npm run prepare` to give permissions to pre-commit and pre-push hooks
 
 ```bash
 npm run prepare
@@ -52,5 +47,11 @@ npm run test:all ## both api server and ui tests
 
 ## Design
 
-CommonJS used for ease of implementation
-Husky used for pre-push hook
+### Tooling
+
+- CommonJS used for ease of implementation
+- Husky used for pre-push hook to prevent PR noise
+
+### Future additions
+
+- Add translation (i18n) and basic localization
