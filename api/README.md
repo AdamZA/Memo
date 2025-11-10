@@ -18,36 +18,36 @@ node -v   # Expect v24.11.0
 ## cURL references
 
 ```bash
-### Health
+# Health
 curl -i http://localhost:3000/health
 
-### List memos
+# List memos
 curl -i http://localhost:3000/memos
 
-### Get by id
+# Get by id
 curl -i http://localhost:3000/memos/123
 
-### Create memo (placeholder)
+# Create memo (placeholder)
 curl -i -X POST http://localhost:3000/memos \
  -H "Content-Type: application/json" \
  -d '{"title":"test","body":"test"}'
 
-### Update memo
+# Update memo
 curl -i -X PUT http://localhost:3000/memos/123 \
  -H "Content-Type: application/json" \
  -d '{"title":"new","body":"new"}'
 
-### Delete memo
+# Delete memo
 curl -i -X DELETE http://localhost:3000/memos/123
 
-### Invalid JSON -> 400
+# Invalid JSON -> 400
 curl -i -X POST http://localhost:3000/memos \
  -H "Content-Type: application/json" \
  -d '{"bad": "data"'
 
-### Unknown path -> 404
+# Unknown path -> 404
 curl -i http://localhost:3000/does-not-exist
 
-### Method not allowed -> 405
+# Method not allowed -> 405
 curl -i -X DELETE http://localhost:3000/memos
 ```

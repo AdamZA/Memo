@@ -10,7 +10,7 @@ describe('Test error handling for middleware layer', () => {
     const res = await request(app)
       .post('/memos')
       .set('Content-Type', 'application/json')
-      .send('{"--":"json"'); // define a malformed JSON payload '--'
+      .send('{"--":"json"'); // Malformed JSON (missing closing brace)
     expect(res.status).toBe(400);
     expect(res.body).toEqual({ error: ERROR_MESSAGES.INVALID_JSON });
   });

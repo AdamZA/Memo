@@ -16,7 +16,7 @@ There are 2 git hooks set up for this repo:
 pre-commit hook: runs prettier check against your code
 pre-push hook: runs typechecks and unit tests for the repo
 
-Use npm run prepare to give permissions to pre-commit and pre-push hooks
+Use `npm run prepare` to give permissions to pre-commit and pre-push hooks
 
 ```bash
 npm run prepare
