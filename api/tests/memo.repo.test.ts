@@ -6,7 +6,7 @@ const FIXED_IDS = ['id-1', 'id-2', 'id-3', 'id-4', 'id-5'];
 let idIndex = 0;
 const testIdGen = () => FIXED_IDS[idIndex++ % FIXED_IDS.length];
 
-// Defined clock for tests, set (Jan 1, 2025 UTC)
+// Defined clock for tests, set to (Jan 1, 2025 UTC)
 const START_2025_IN_MS = Date.UTC(2025, 0, 1, 0, 0, 0);
 let newCreatedAtValue = START_2025_IN_MS;
 const testClock = () => newCreatedAtValue;
