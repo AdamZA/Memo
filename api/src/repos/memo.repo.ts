@@ -21,7 +21,7 @@ export interface MemoRepo {
 
 // URL-Safe NanoID generator (21 chars)
 const defaultIdGen: IdGen = customAlphabet(
-  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-',
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_',
   21,
 );
 const defaultClock: Clock = () => Date.now();
