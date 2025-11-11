@@ -1,12 +1,12 @@
 import type { Memo, MemoId } from '../schemas/memo.schema';
-import type { MemoRepo } from '../repos/memo.repo';
+import type { ListArgs, ListResult, MemoRepo } from '../repos/memo.repo';
 import {
   MemoCreate as MemoCreateSchema,
   MemoUpdate as MemoUpdateSchema,
 } from '../schemas/memo.schema';
 
 export interface MemoService {
-  list(params?: { page?: number; limit?: number; query?: string }): Memo[];
+  list(params?: ListArgs): ListResult;
   get(id: MemoId): Memo | undefined;
   create(input: unknown): Memo; // Unknown to enforce runtime validation
   update(id: MemoId, input: unknown): Memo | undefined;
@@ -14,9 +14,8 @@ export interface MemoService {
 }
 
 export function createMemoService(repo: MemoRepo): MemoService {
-  function list(params?: { page?: number; limit?: number; query?: string }): Memo[] {
-    const { data } = repo.list(params);
-    return data;
+  function list(params?: ListArgs): ListResult {
+    return repo.list(params);
   }
 
   function get(id: MemoId): Memo | undefined {

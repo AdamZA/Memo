@@ -53,18 +53,25 @@ describe('Memo Service layer tests', () => {
       service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
     }
 
-    // Check paginated results
+    // Check paginated results for expected titles and metadata
     const page1Data = service.list({ page: 1, limit: 2 });
-    expect(page1Data.map((m) => m.title)).toEqual(['title-0', 'title-1']);
-
-    const page2Data = service.list({ page: 2, limit: 2 });
-    expect(page2Data.map((m) => m.title)).toEqual(['title-2', 'title-3']);
-
+    expect(page1Data.data.map((m) => m.title)).toEqual(['title-0', 'title-1']);
+    expect(page1Data.total).toBe(5);
+    expect(page1Data.page).toBe(1);
+    expect(page1Data.limit).toBe(2);
+    const page2 = service.list({ page: 2, limit: 2 });
+    expect(page2.data.map((m) => m.title)).toEqual(['title-2', 'title-3']);
+    expect(page2.total).toBe(5);
+    expect(page2.page).toBe(2);
+    expect(page2.limit).toBe(2);
     const page3Data = service.list({ page: 3, limit: 2 });
-    expect(page3Data.map((m) => m.title)).toEqual(['title-4']);
+    expect(page3Data.data.map((m) => m.title)).toEqual(['title-4']);
+    expect(page3Data.total).toBe(5);
+    expect(page3Data.page).toBe(3);
+    expect(page3Data.limit).toBe(2);
 
     const page4Data = service.list({ page: 4, limit: 2 });
-    expect(page4Data).toEqual([]); // Gracefully handles out-of-bounds page index
+    expect(page4Data.data).toEqual([]); // Gracefully handles out-of-bounds page
   });
 
   it('List memos test for filtering results by query value', () => {
@@ -73,7 +80,7 @@ describe('Memo Service layer tests', () => {
     service.create({ title: 'Test3', body: 'Filter result' });
 
     const filtered = service.list({ query: 'fil' });
-    expect(filtered.map((m) => m.title)).toEqual(['Filter result', 'Test3']);
+    expect(filtered.data.map((m) => m.title)).toEqual(['Filter result', 'Test3']);
   });
 
   it('Get memo by ID returns the entity, or undefined when not found', () => {
