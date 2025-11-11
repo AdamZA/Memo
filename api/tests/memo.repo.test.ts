@@ -109,8 +109,9 @@ describe('In-memory Memo Repository tests', () => {
 
   it('Test normalization of pagination bounds', () => {
     const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
-    for (let testIndex = 0; testIndex < 3; testIndex++)
+    for (let testIndex = 0; testIndex < 3; testIndex++) {
       repo.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
+    }
 
     // Boundary test: negative page number, maximum limit exceeded test
     const listReturn = repo.list({ page: -5, limit: 9999 });
