@@ -15,6 +15,14 @@ nvm use 24
 node -v   # Expect v24.11.0
 ```
 
+## Running tests
+
+Vitest and Supertest used for testing
+
+```bash
+npm run test
+```
+
 ## cURL references
 
 ```bash
