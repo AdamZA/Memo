@@ -1,4 +1,4 @@
-import { customAlphabet } from 'nanoid';
+import { customAlphabet, urlAlphabet } from 'nanoid';
 import type { Memo, MemoCreate, MemoUpdate, MemoId } from '../schemas/memo.schema';
 
 // Injectable ID generator and clock for easy mocking/testing
@@ -20,10 +20,7 @@ export interface MemoRepo {
 }
 
 // URL-Safe NanoID generator (21 chars)
-const defaultIdGen: IdGen = customAlphabet(
-  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_',
-  21,
-);
+const defaultIdGen: IdGen = customAlphabet(urlAlphabet, 21);
 const defaultClock: Clock = () => Date.now();
 
 // Pagination defaults
