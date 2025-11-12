@@ -5,4 +5,5 @@ export const ERROR_MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Internal Server Error',
   NOT_FOUND: 'Not Found',
   METHOD_NOT_ALLOWED: 'Method Not Allowed',
+  VALIDATION_FAILED: 'Validation failed',
 };

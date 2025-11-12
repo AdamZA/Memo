@@ -4,7 +4,7 @@ import { createApp } from '../src/app';
 import { ERROR_MESSAGES } from '../src/constants/errors';
 
 describe('Test error handling for middleware layer', () => {
-  const app = createApp();
+  const app = createApp({});
 
   it('POST malformed JSON, expect 400 response', async () => {
     const res = await request(app)

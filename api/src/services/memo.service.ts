@@ -1,41 +1,43 @@
 import type { Memo, MemoId } from '../schemas/memo.schema';
-import type { ListArgs, ListResult, MemoRepo } from '../repos/memo.repo';
+import type { ListArgs, ListResult, AsyncMemoRepo } from '../repos/memo.repo';
 import {
   MemoCreate as MemoCreateSchema,
   MemoUpdate as MemoUpdateSchema,
 } from '../schemas/memo.schema';
 
-export interface MemoService {
-  list(params?: ListArgs): ListResult;
-  get(id: MemoId): Memo | undefined;
-  create(input: unknown): Memo; // Unknown to enforce runtime validation
-  update(id: MemoId, input: unknown): Memo | undefined;
-  delete(id: MemoId): boolean;
+export interface AsyncMemoService {
+  list(params?: ListArgs): Promise<ListResult>;
+  get(id: MemoId): Promise<Memo | undefined>;
+  create(input: unknown): Promise<Memo>; // Unknown to enforce runtime validation
+  update(id: MemoId, input: unknown): Promise<Memo | undefined>;
+  delete(id: MemoId): Promise<boolean>;
 }
 
-export function createMemoService(repo: MemoRepo): MemoService {
-  function list(params?: ListArgs): ListResult {
+// Service implementation that wraps the repo with input validation
+// Note: Designed as async to allow for future async integrations (e.g. external APIs, queues)
+export function createAsyncMemoService(repo: AsyncMemoRepo): AsyncMemoService {
+  async function list(params?: ListArgs): Promise<ListResult> {
     return repo.list(params);
   }
 
-  function get(id: MemoId): Memo | undefined {
+  async function get(id: MemoId): Promise<Memo | undefined> {
     return repo.get(id);
   }
 
-  function create(input: unknown): Memo {
+  async function create(input: unknown): Promise<Memo> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoCreateSchema.parse(input);
     return repo.create(parsed);
   }
 
-  function update(id: MemoId, input: unknown): Memo | undefined {
+  async function update(id: MemoId, input: unknown): Promise<Memo | undefined> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoUpdateSchema.parse(input);
     return repo.update(id, parsed);
   }
 
   // 'Delete' is a reserved word in JS/TS, so we use 'remove' internally
-  function remove(id: MemoId): boolean {
+  async function remove(id: MemoId): Promise<boolean> {
     return repo.delete(id);
   }
 
