@@ -127,7 +127,7 @@ describe('Memo mutation routes (POST/PUT/DELETE)', () => {
     const invalidCreateResponse = await request(app).post('/memos').send({ title: '', body: '' }); // Violates MemoCreateSchema
 
     expect(invalidCreateResponse.status).toBe(400);
-    expect(invalidCreateResponse.body.error).toBe(ERROR_MESSAGES.VALIDATION_FAILED); // Assuming generalError uses this wording
+    expect(invalidCreateResponse.body.error).toBe(ERROR_MESSAGES.VALIDATION_FAILED); // generalError uses this wording
     expect(Array.isArray(invalidCreateResponse.body.details)).toBe(true);
   });
 
