@@ -23,7 +23,9 @@ export function createMemosController(service: AsyncMemoService) {
     try {
       const id = MemoIdSchema.parse(req.params.id);
       const memo = await service.get(id);
-      if (!memo) return res.status(404).json({ error: ERROR_MESSAGES.NOT_FOUND });
+      if (!memo) {
+        return res.status(404).json({ error: ERROR_MESSAGES.NOT_FOUND });
+      } 
       return res.json(memo);
     } catch (err) {
       return next(err);
