@@ -52,7 +52,7 @@ describe('Read-only /memos routes (GET)', () => {
   it('GET /memos with invalid query values', async () => {
     const res = await request(app).get('/memos?page=-9&limit=9999');
     expect(res.status).toBe(400);
-    expect(res.body.page).toBeUndefined;
+    expect(res.body.page).toBeUndefined();
     expect(res.body.limit).toBeUndefined();
   });
 
