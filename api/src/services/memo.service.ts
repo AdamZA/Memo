@@ -17,7 +17,7 @@ export interface AsyncMemoService {
 // Note: Designed as async to allow for future async integrations (e.g. external APIs, queues)
 export function createAsyncMemoService(repo: AsyncMemoRepo): AsyncMemoService {
   async function list(params?: ListArgs): Promise<ListResult> {
-    return repo.list(params);
+    return await repo.list(params);
   }
 
   async function get(id: MemoId): Promise<Memo | undefined> {
