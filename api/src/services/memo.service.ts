@@ -17,28 +17,28 @@ export interface AsyncMemoService {
 // Note: Designed as async to allow for future async integrations (e.g. external APIs, queues)
 export function createAsyncMemoService(repo: AsyncMemoRepo): AsyncMemoService {
   async function list(params?: ListArgs): Promise<ListResult> {
-    return await repo.list(params);
+    return repo.list(params);
   }
 
   async function get(id: MemoId): Promise<Memo | undefined> {
-    return await repo.get(id);
+    return repo.get(id);
   }
 
   async function create(input: unknown): Promise<Memo> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoCreateSchema.parse(input);
-    return await repo.create(parsed);
+    return repo.create(parsed);
   }
 
   async function update(id: MemoId, input: unknown): Promise<Memo | undefined> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoUpdateSchema.parse(input);
-    return await repo.update(id, parsed);
+    return repo.update(id, parsed);
   }
 
   // 'Delete' is a reserved word in JS/TS, so we use 'remove' internally
   async function remove(id: MemoId): Promise<boolean> {
-    return await repo.delete(id);
+    return repo.delete(id);
   }
 
   return { list, get, create, update, delete: remove };
