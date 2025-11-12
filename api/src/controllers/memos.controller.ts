@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { AsyncMemoService } from '../services/memo.service';
 import { MemoListQuerySchema } from '../schemas/memo.list.schema';
-import { MemoIdSchema as MemoIdSchema } from '../schemas/memo.schema';
+import { MemoIdSchema } from '../schemas/memo.schema';
 import { ERROR_MESSAGES } from '../constants/errors';
 
 export function createMemosController(service: AsyncMemoService) {
