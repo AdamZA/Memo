@@ -31,7 +31,8 @@ describe('In-memory Memo Repository tests', () => {
     expect(createReturn.updatedAt).toBe(createReturn.createdAt);
 
     // Check fetched Memo matches create result
-    const getReturn = await repo.get(createReturn.id)!;
+    const getReturn = await repo.get(createReturn.id);
+    expect(getReturn).toBeDefined();
     expect(getReturn).toEqual(createReturn);
   });
 
