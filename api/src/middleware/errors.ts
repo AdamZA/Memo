@@ -3,6 +3,7 @@ import { PARSE_ERROR_TYPE, ERROR_MESSAGES } from '../constants/errors';
 import { HEADERS } from '../constants/payloads';
 import { JsonParseError } from '../types/errors';
 import { ZodError } from 'zod';
+import { formatZodError } from '../utils/formatters';
 
 export function notFound(_req: Request, res: Response) {
   res.status(404).json({ error: ERROR_MESSAGES.NOT_FOUND });
@@ -27,14 +28,10 @@ export function generalError(err: any, _req: Request, res: Response, _next: Next
   if (err instanceof ZodError) {
     return res.status(400).json({
       error: ERROR_MESSAGES.VALIDATION_FAILED,
-      summary: `Encountered ${err.issues.length} issue(s)`,
-      details: err.issues.map((issue) => ({
-        path: issue.path.join('.'),
-        message: issue.message,
-      })),
+      details: formatZodError(err),
     });
   }
 
-  console.error('Unexpected error:', err);
+  console.error(ERROR_MESSAGES.UNEXPECTED_ERROR, err);
   return res.status(500).json({ error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
 }

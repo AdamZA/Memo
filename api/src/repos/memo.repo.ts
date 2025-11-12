@@ -1,5 +1,5 @@
 import { customAlphabet, urlAlphabet } from 'nanoid';
-import type { Memo, MemoCreate, MemoUpdate, MemoId } from '../schemas/memo.schema';
+import type { Memo, MemoId, MemoCreate, MemoUpdate } from '../schemas/memo.schema';
 
 // Injectable ID generator and clock for easy mocking/testing
 export type IdGen = () => string;

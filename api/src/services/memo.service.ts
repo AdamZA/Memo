@@ -1,8 +1,8 @@
 import type { Memo, MemoId } from '../schemas/memo.schema';
 import type { ListArgs, ListResult, AsyncMemoRepo } from '../repos/memo.repo';
 import {
-  MemoCreate as MemoCreateSchema,
-  MemoUpdate as MemoUpdateSchema,
+  MemoBaseSchema as MemoCreateSchema,
+  MemoUpdateSchema as MemoUpdateSchema,
 } from '../schemas/memo.schema';
 
 export interface AsyncMemoService {
