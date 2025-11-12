@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import type { MemoService } from '../services/memo.service';
+import type { AsyncMemoService } from '../services/memo.service';
 import { createMemosController } from '../controllers/memos.controller';
 import { methodNotAllowed } from '../middleware/errors';
 
-export function createMemosRouter(service: MemoService) {
+export function createMemosRouter(service: AsyncMemoService) {
   const router = Router();
   const { listMemos, getMemoById, createMemo, updateMemo, deleteMemo } =
     createMemosController(service);

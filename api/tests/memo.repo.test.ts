@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createInMemoryMemoRepo } from '../src/repos/memo.repo';
+import { createAsyncInMemoryMemoRepo } from '../src/repos/memo.repo';
 
 // Defined IDs for testing
 const FIXED_IDS = ['id-1', 'id-2', 'id-3', 'id-4', 'id-5'];
@@ -19,7 +19,7 @@ describe('In-memory Memo Repository tests', () => {
   });
 
   it('Create a memo using defined IDs and timestamps', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
     const createReturn = await repo.create({ title: 'Test title', body: 'Test body' });
 
@@ -36,7 +36,7 @@ describe('In-memory Memo Repository tests', () => {
   });
 
   it('Test list Memo result with pagination and expected insert order', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
     for (let testIndex = 0; testIndex < 5; testIndex++) {
       await repo.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
@@ -59,7 +59,7 @@ describe('In-memory Memo Repository tests', () => {
   });
 
   it('Test filtering results by query', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
     await repo.create({ title: 'Filter result', body: 'Test1' });
     await repo.create({ title: 'Ignored', body: 'Test2' });
@@ -71,7 +71,7 @@ describe('In-memory Memo Repository tests', () => {
   });
 
   it('Test Memo update, including versioning and updatedAt values', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
     const createReturn = await repo.create({ title: 'Original', body: 'Body' });
 
@@ -90,13 +90,13 @@ describe('In-memory Memo Repository tests', () => {
   });
 
   it('Test hitting update method with non-existent ID', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
     const updateReturn = await repo.update('missing-id', { title: 'missing' });
     expect(updateReturn).toBeUndefined();
   });
 
   it('Test delete functionality, and return on both successful delete and entity not found', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
     const createdReturn = await repo.create({ title: 'To remove', body: 'Test' });
 
@@ -109,7 +109,7 @@ describe('In-memory Memo Repository tests', () => {
   });
 
   it('Test normalization of pagination bounds', async () => {
-    const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
     for (let testIndex = 0; testIndex < 3; testIndex++) {
       await repo.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
     }

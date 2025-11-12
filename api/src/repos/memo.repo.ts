@@ -10,7 +10,7 @@ export type ListArgs = { page?: number; limit?: number; query?: string };
 export type ListResult = { data: Memo[]; total: number; page: number; limit: number };
 
 // Memo repository interface
-export interface MemoRepo {
+export interface AsyncMemoRepo {
   list(args?: ListArgs): Promise<ListResult>;
   get(id: MemoId): Promise<Memo | undefined>;
   create(input: MemoCreate): Promise<Memo>;
@@ -35,7 +35,10 @@ function matchesQuery(memo: Memo, query: string) {
 }
 
 // In-memory implementation of data repository, with query and pagination support
-export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }): MemoRepo {
+export function createAsyncInMemoryMemoRepo(opts?: {
+  idGen?: IdGen;
+  clock?: Clock;
+}): AsyncMemoRepo {
   const idGen = opts?.idGen ?? defaultIdGen;
   const clock = opts?.clock ?? defaultClock;
   const store = new Map<MemoId, Memo>();
@@ -59,10 +62,12 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
     return { data, total, page, limit };
   }
 
+  // Define as async for easy swap-out with real DB calls later
   async function get(id: MemoId): Promise<Memo | undefined> {
     return store.get(id);
   }
 
+  // Define as async for easy swap-out with real DB calls later
   async function create(input: MemoCreate): Promise<Memo> {
     const now = new Date(clock()).toISOString();
     const memo: Memo = {
@@ -77,6 +82,7 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
     return memo;
   }
 
+  // Define as async for easy swap-out with real DB calls later
   async function update(id: MemoId, patch: MemoUpdate): Promise<Memo | undefined> {
     const existing = store.get(id);
     if (!existing) return undefined;
@@ -93,6 +99,7 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
     return updated;
   }
 
+  // Define as async for easy swap-out with real DB calls later
   async function _delete(id: MemoId): Promise<boolean> {
     return store.delete(id);
   }

@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { MemoService } from '../services/memo.service';
+import type { AsyncMemoService } from '../services/memo.service';
 import { ListQuerySchema } from '../schemas/list.schema';
 import { MemoId as MemoIdSchema } from '../schemas/memo.schema';
 import { ERROR_MESSAGES } from '../constants/errors';
 
-export function createMemosController(service: MemoService) {
+export function createMemosController(service: AsyncMemoService) {
   // GET /memos
   async function listMemos(req: Request, res: Response, next: NextFunction) {
     try {

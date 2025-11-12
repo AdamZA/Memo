@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createMemoService } from '../src/services/memo.service';
-import { createInMemoryMemoRepo } from '../src/repos/memo.repo';
+import { createAsyncMemoService } from '../src/services/memo.service';
+import { createAsyncInMemoryMemoRepo } from '../src/repos/memo.repo';
 
 // Deterministic ID generator
 const FIXED_IDS = ['id-1', 'id-2', 'id-3', 'id-4', 'id-5'];
@@ -14,15 +14,15 @@ const testClock = () => mockedNowInMs;
 
 describe('Memo Service layer tests', () => {
   // Align types with whatever repo/service returns
-  let repo: ReturnType<typeof createInMemoryMemoRepo>;
-  let service: ReturnType<typeof createMemoService>;
+  let repo: ReturnType<typeof createAsyncInMemoryMemoRepo>;
+  let service: ReturnType<typeof createAsyncMemoService>;
 
   // Create fresh repo and service before each test
   beforeEach(() => {
     idIndex = 0;
     mockedNowInMs = START_2025_IN_MS;
-    repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
-    service = createMemoService(repo);
+    repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    service = createAsyncMemoService(repo);
   });
 
   it('Create a memo via service and persist to repo', async () => {

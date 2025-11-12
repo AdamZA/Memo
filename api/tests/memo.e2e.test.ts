@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../src/app';
-import { createInMemoryMemoRepo } from '../src/repos/memo.repo';
-import { createMemoService } from '../src/services/memo.service';
+import { createAsyncInMemoryMemoRepo } from '../src/repos/memo.repo';
+import { createAsyncMemoService } from '../src/services/memo.service';
 import { ERROR_MESSAGES } from '../src/constants/errors';
 
 // Deterministic IDs for tests
@@ -16,14 +16,14 @@ let mockedNowInMs = START_2025_IN_MS;
 const testClock = () => mockedNowInMs;
 
 describe('Read-only /memos routes (GET)', () => {
-  let repo: ReturnType<typeof createInMemoryMemoRepo>;
+  let repo: ReturnType<typeof createAsyncInMemoryMemoRepo>;
   let app: ReturnType<typeof createApp>;
 
   beforeEach(async () => {
     idIndex = 0;
     mockedNowInMs = START_2025_IN_MS;
-    repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
-    const service = createMemoService(repo);
+    repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const service = createAsyncMemoService(repo);
     app = createApp({ service }); // Only service needed, as it relies on repo internally
 
     // Seed with 3 memos
