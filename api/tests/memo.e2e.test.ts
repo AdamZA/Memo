@@ -53,7 +53,7 @@ describe('Read-only /memos routes (GET)', () => {
     const res = await request(app).get('/memos?page=-9&limit=9999');
     expect(res.status).toBe(400);
     expect(res.body.page).toBeUndefined;
-    expect(res.body.limit).toBeUndefined;
+    expect(res.body.limit).toBeUndefined();
   });
 
   it('GET /memos/:id returns memo when found', async () => {
