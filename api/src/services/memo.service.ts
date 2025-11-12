@@ -27,7 +27,7 @@ export function createAsyncMemoService(repo: AsyncMemoRepo): AsyncMemoService {
   async function create(input: unknown): Promise<Memo> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoCreateSchema.parse(input);
-    return repo.create(parsed);
+    return await repo.create(parsed);
   }
 
   async function update(id: MemoId, input: unknown): Promise<Memo | undefined> {
