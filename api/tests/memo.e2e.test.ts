@@ -24,7 +24,7 @@ describe('Read-only /memos routes (GET)', () => {
     mockedNowInMs = START_2025_IN_MS;
     repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
     const service = createMemoService(repo);
-    app = createApp({ repo, service });
+    app = createApp({ service }); // Only service needed, as it relies on repo internally
 
     // Seed with 3 memos
     service.create({ title: 'Memo 0', body: 'Body 0' });

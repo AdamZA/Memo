@@ -9,7 +9,7 @@ export function createMemosController(service: MemoService) {
   async function listMemos(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = ListQuerySchema.parse(req.query);
-      const { data, total, page, limit } = service.list(parsed);
+      const { data, total, page, limit } = await service.list(parsed);
       res.set('X-Total-Count', String(total));
 
       return res.json({ data, total, page, limit });
@@ -22,7 +22,7 @@ export function createMemosController(service: MemoService) {
   async function getMemoById(req: Request, res: Response, next: NextFunction) {
     try {
       const id = MemoIdSchema.parse(req.params.id);
-      const memo = service.get(id);
+      const memo = await service.get(id);
       if (!memo) return res.status(404).json({ error: ERROR_MESSAGES.NOT_FOUND });
       return res.json(memo);
     } catch (err) {

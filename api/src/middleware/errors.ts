@@ -26,7 +26,7 @@ export function badJson(err: JsonParseError, _req: Request, res: Response, next:
 export function generalError(err: any, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof ZodError) {
     return res.status(400).json({
-      error: 'Validation failed',
+      error: ERROR_MESSAGES.VALIDATION_FAILED,
       summary: `Encountered ${err.issues.length} issue(s)`,
       details: err.issues.map((issue) => ({
         path: issue.path.join('.'),

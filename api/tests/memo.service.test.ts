@@ -25,8 +25,8 @@ describe('Memo Service layer tests', () => {
     service = createMemoService(repo);
   });
 
-  it('Create a memo via service and persist to repo', () => {
-    const createReturn = service.create({ title: 'Test title', body: 'Test body' });
+  it('Create a memo via service and persist to repo', async () => {
+    const createReturn = await service.create({ title: 'Test title', body: 'Test body' });
 
     expect(createReturn.id).toBe('id-1');
     expect(createReturn.title).toBe('Test title');
@@ -40,93 +40,98 @@ describe('Memo Service layer tests', () => {
     expect(fetched).toEqual(createReturn);
   });
 
-  it('Test validation on payload', () => {
-    // Zod's .parse() throws ZodError on invalid input
-    expect(() => service.create({ title: 'Valid title', body: 'Valid body' })).not.toThrow();
-    expect(() => service.create({ title: 'Invalid body', body: '' })).toThrow();
-    expect(() => service.create({ title: '', body: 'Invalid title' })).toThrow();
-    expect(() => service.create({})).toThrow();
+  it('Test validation on payload', async () => {
+    await expect(
+      service.create({ title: 'Valid title', body: 'Valid body' }),
+    ).resolves.toMatchObject({ title: 'Valid title', body: 'Valid body', version: 1 });
+
+    await expect(service.create({ title: 'Invalid body', body: '' })).rejects.toThrow();
+
+    await expect(service.create({ title: '', body: 'Invalid title' })).rejects.toThrow();
+
+    await expect(service.create({})).rejects.toThrow();
   });
 
-  it('List memos tests for both insertion order and pagination', () => {
+  it('List memos tests for both insertion order and pagination', async () => {
     for (let testIndex = 0; testIndex < 5; testIndex++) {
       service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
     }
 
     // Check paginated results for expected titles and metadata
-    const page1Data = service.list({ page: 1, limit: 2 });
-    expect(page1Data.data.map((m) => m.title)).toEqual(['title-0', 'title-1']);
+    const page1Data = await service.list({ page: 1, limit: 2 });
+    expect(page1Data.data.map((map) => map.title)).toEqual(['title-0', 'title-1']);
     expect(page1Data.total).toBe(5);
     expect(page1Data.page).toBe(1);
     expect(page1Data.limit).toBe(2);
-    const page2 = service.list({ page: 2, limit: 2 });
-    expect(page2.data.map((m) => m.title)).toEqual(['title-2', 'title-3']);
+    const page2 = await service.list({ page: 2, limit: 2 });
+    expect(page2.data.map((map) => map.title)).toEqual(['title-2', 'title-3']);
     expect(page2.total).toBe(5);
     expect(page2.page).toBe(2);
     expect(page2.limit).toBe(2);
-    const page3Data = service.list({ page: 3, limit: 2 });
-    expect(page3Data.data.map((m) => m.title)).toEqual(['title-4']);
+    const page3Data = await service.list({ page: 3, limit: 2 });
+    expect(page3Data.data.map((map) => map.title)).toEqual(['title-4']);
     expect(page3Data.total).toBe(5);
     expect(page3Data.page).toBe(3);
     expect(page3Data.limit).toBe(2);
 
-    const page4Data = service.list({ page: 4, limit: 2 });
+    const page4Data = await service.list({ page: 4, limit: 2 });
     expect(page4Data.data).toEqual([]); // Gracefully handles out-of-bounds page
   });
 
-  it('List memos test for filtering results by query value', () => {
-    service.create({ title: 'Filter result', body: 'Test1' });
-    service.create({ title: 'Ignored', body: 'Test2' });
-    service.create({ title: 'Test3', body: 'Filter result' });
+  it('List memos test for filtering results by query value', async () => {
+    await service.create({ title: 'Filter result', body: 'Test1' });
+    await service.create({ title: 'Ignored', body: 'Test2' });
+    await service.create({ title: 'Test3', body: 'Filter result' });
 
-    const filtered = service.list({ query: 'fil' });
+    const filtered = await service.list({ query: 'fil' });
     expect(filtered.data.map((m) => m.title)).toEqual(['Filter result', 'Test3']);
   });
 
-  it('Get memo by ID returns the entity, or undefined when not found', () => {
-    const created = service.create({ title: 'Find me', body: 'Lookup' });
+  it('Get memo by ID returns the entity, or undefined when not found', async () => {
+    const created = await service.create({ title: 'Find me', body: 'Lookup' });
 
-    const found = service.get(created.id);
+    const found = await service.get(created.id);
     expect(found?.id).toBe(created.id);
 
-    const missing = service.get('missing-id');
+    const missing = await service.get('missing-id');
     expect(missing).toBeUndefined();
   });
 
-  it('Update an existing memo, bumping version and updatedAt', () => {
-    const created = service.create({ title: 'Original title', body: 'Body' });
+  it('Update an existing memo, bumping version and updatedAt', async () => {
+    const created = await service.create({ title: 'Original title', body: 'Body' });
 
     // Advance mock clock by 5 minutes for updatedAt
     mockedNowInMs = Date.UTC(2025, 0, 1, 0, 5, 0);
 
-    const updated = service.update(created.id, { title: 'Edited title' })!;
-    expect(updated.id).toBe(created.id);
-    expect(updated.title).toBe('Edited title');
-    expect(updated.body).toBe('Body');
-    expect(updated.version).toBe(2);
-    expect(updated.createdAt).toBe(created.createdAt);
-    expect(updated.updatedAt).toBe(new Date(mockedNowInMs).toISOString());
+    const updated = await service.update(created.id, { title: 'Edited title' })!;
+    expect(updated).toBeDefined();
+    expect(updated?.id).toBe(created.id);
+    expect(updated?.title).toBe('Edited title');
+    expect(updated?.body).toBe('Body');
+    expect(updated?.version).toBe(2);
+    expect(updated?.createdAt).toBe(created.createdAt);
+    expect(updated?.updatedAt).toBe(new Date(mockedNowInMs).toISOString());
   });
 
-  it('Update returns undefined when the memo does not exist', () => {
-    const updateReturn = service.update('missing-id', { title: 'Edited title' });
+  it('Update returns undefined when the memo does not exist', async () => {
+    const updateReturn = await service.update('missing-id', { title: 'Edited title' });
     expect(updateReturn).toBeUndefined();
   });
 
-  it('Test validation on update payloads', () => {
-    const created = service.create({ title: 'Test title', body: 'Test body' });
+  it('Test validation on update payloads', async () => {
+    const created = await service.create({ title: 'Test title', body: 'Test body' });
     // Attempt to update with empty payload (invalid)
-    expect(() => service.update(created.id, {})).toThrow();
+    expect(service.update(created.id, {})).rejects.toThrow();
   });
 
-  it('Test delete return paths', () => {
-    const created = service.create({ title: 'Test title', body: 'Test body' });
+  it('Test delete return paths', async () => {
+    const created = await service.create({ title: 'Test title', body: 'Test body' });
 
     // First removal succeeds, returns true, can't fetch once deleted
-    expect(service.delete(created.id)).toBe(true);
-    expect(service.get(created.id)).toBeUndefined();
+    expect(service.delete(created.id)).resolves.toBe(true);
+    expect(service.get(created.id)).resolves.toBeUndefined();
 
     // Second removal fails to find entity, returns false
-    expect(service.delete(created.id)).toBe(false);
+    expect(service.delete(created.id)).resolves.toBe(false);
   });
 });
