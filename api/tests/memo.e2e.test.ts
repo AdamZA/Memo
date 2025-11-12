@@ -76,4 +76,22 @@ describe('Read-only /memos routes (GET)', () => {
     const res = await request(app).get('/memos?page=not-a-number');
     expect(res.status).toBe(400);
   });
+
+  it('GET /memos query is case-insensitive and handles whitespace', async () => {
+    const res = await request(app).get('/memos?query=  memo  ');
+    expect(res.status).toBe(200);
+
+    expect(res.body.total).toBe(3);
+    const titles = res.body.data.map((m: any) => m.title);
+    expect(titles).toContain('Memo 0');
+    expect(titles).toContain('Memo 1');
+    expect(titles).toContain('Memo 2');
+  });
+
+  it('GET /memos query that matches nothing returns empty data', async () => {
+    const res = await request(app).get('/memos?query=nomatches');
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBe(0);
+    expect(res.body.data).toEqual([]);
+  });
 });
