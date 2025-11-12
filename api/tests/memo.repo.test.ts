@@ -61,9 +61,9 @@ describe('In-memory Memo Repository tests', () => {
   it('Test filtering results by query', async () => {
     const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
-    repo.create({ title: 'Filter result', body: 'Test1' });
-    repo.create({ title: 'Ignored', body: 'Test2' });
-    repo.create({ title: 'Test3', body: 'Filter result' });
+    await repo.create({ title: 'Filter result', body: 'Test1' });
+    await repo.create({ title: 'Ignored', body: 'Test2' });
+    await repo.create({ title: 'Test3', body: 'Filter result' });
 
     const filtered = await repo.list({ query: 'fil' });
     expect(filtered.total).toBe(2);
