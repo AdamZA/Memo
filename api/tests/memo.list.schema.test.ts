@@ -6,7 +6,7 @@ describe('MemoListQuerySchema tests', () => {
     expect(() => MemoListQuerySchema.parse({ page: '2.9', limit: 15.2, query: 'abc' })).toThrow();
   });
 
-  it('Test whitespace trimming', () => {
+  it('Test that query whitespace is trimmed', () => {
     const parsed = MemoListQuerySchema.parse({ query: '  Fil  ' });
     expect(parsed).toEqual({ query: 'Fil' });
   });
