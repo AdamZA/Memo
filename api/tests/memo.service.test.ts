@@ -36,7 +36,7 @@ describe('Memo Service layer tests', () => {
     expect(createReturn.updatedAt).toBe(createReturn.createdAt);
 
     // Confirm persisted
-    const fetched = repo.get(createReturn.id)!;
+    const fetched = await repo.get(createReturn.id);
     expect(fetched).toEqual(createReturn);
   });
 
@@ -107,7 +107,7 @@ describe('Memo Service layer tests', () => {
     // Advance mock clock by 5 minutes for updatedAt
     mockedNowInMs = Date.UTC(2025, 0, 1, 0, 5, 0);
 
-    const updated = await service.update(created.id, { title: 'Edited title' })!;
+    const updated = await service.update(created.id, { title: 'Edited title' });
     expect(updated).toBeDefined();
     expect(updated?.id).toBe(created.id);
     expect(updated?.title).toBe('Edited title');

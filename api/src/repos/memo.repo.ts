@@ -11,11 +11,11 @@ export type ListResult = { data: Memo[]; total: number; page: number; limit: num
 
 // Memo repository interface
 export interface MemoRepo {
-  list(args?: ListArgs): ListResult;
-  get(id: MemoId): Memo | undefined;
-  create(input: MemoCreate): Memo;
-  update(id: MemoId, patch: MemoUpdate): Memo | undefined;
-  delete(id: MemoId): boolean;
+  list(args?: ListArgs): Promise<ListResult>;
+  get(id: MemoId): Promise<Memo | undefined>;
+  create(input: MemoCreate): Promise<Memo>;
+  update(id: MemoId, patch: MemoUpdate): Promise<Memo | undefined>;
+  delete(id: MemoId): Promise<boolean>;
   clear(): void; // For testing purposes only
 }
 
@@ -40,7 +40,7 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
   const clock = opts?.clock ?? defaultClock;
   const store = new Map<MemoId, Memo>();
 
-  function list(args: ListArgs = {}): ListResult {
+  async function list(args: ListArgs = {}): Promise<ListResult> {
     // Normalize pagination args
     const page = Math.max(1, Math.floor(args.page ?? DEFAULT_PAGE));
     const limit = Math.min(MAX_LIMIT, Math.max(1, Math.floor(args.limit ?? DEFAULT_LIMIT)));
@@ -59,11 +59,11 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
     return { data, total, page, limit };
   }
 
-  function get(id: MemoId): Memo | undefined {
+  async function get(id: MemoId): Promise<Memo | undefined> {
     return store.get(id);
   }
 
-  function create(input: MemoCreate): Memo {
+  async function create(input: MemoCreate): Promise<Memo> {
     const now = new Date(clock()).toISOString();
     const memo: Memo = {
       id: idGen(),
@@ -77,7 +77,7 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
     return memo;
   }
 
-  function update(id: MemoId, patch: MemoUpdate): Memo | undefined {
+  async function update(id: MemoId, patch: MemoUpdate): Promise<Memo | undefined> {
     const existing = store.get(id);
     if (!existing) return undefined;
 
@@ -93,7 +93,7 @@ export function createInMemoryMemoRepo(opts?: { idGen?: IdGen; clock?: Clock }):
     return updated;
   }
 
-  function _delete(id: MemoId): boolean {
+  async function _delete(id: MemoId): Promise<boolean> {
     return store.delete(id);
   }
 
