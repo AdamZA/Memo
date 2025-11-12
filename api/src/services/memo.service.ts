@@ -15,7 +15,7 @@ export interface MemoService {
 
 export function createMemoService(repo: MemoRepo): MemoService {
   async function list(params?: ListArgs): Promise<ListResult> {
-    return repo.list(params);
+    return await repo.list(params);
   }
 
   async function get(id: MemoId): Promise<Memo | undefined> {
