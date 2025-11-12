@@ -15,7 +15,7 @@ export interface MemoService {
 
 export function createMemoService(repo: MemoRepo): MemoService {
   async function list(params?: ListArgs): Promise<ListResult> {
-    return repo.list(params);
+    return await repo.list(params);
   }
 
   async function get(id: MemoId): Promise<Memo | undefined> {
@@ -25,7 +25,7 @@ export function createMemoService(repo: MemoRepo): MemoService {
   async function create(input: unknown): Promise<Memo> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoCreateSchema.parse(input);
-    return repo.create(parsed);
+    return await repo.create(parsed);
   }
 
   async function update(id: MemoId, input: unknown): Promise<Memo | undefined> {
