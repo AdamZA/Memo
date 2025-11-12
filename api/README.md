@@ -104,6 +104,29 @@ Example response:
 }
 ```
 
+List memos with query and pagination parameters:
+```bash
+curl "http://localhost:3000/memos?page=1&limit=2&query=hello"
+```
+Example response:
+```json
+{
+  "data": [
+    {
+      "id": "Vxn-pe4X36RWeoyeA6Ch1",
+      "title": "My first memo",
+      "body": "Hello world",
+      "createdAt": "2025-11-12T23:37:14.454Z",
+      "updatedAt": "2025-11-12T23:37:14.454Z",
+      "version": 1
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 2
+}
+```
+
 Get memo by ID:
 ```bash
 curl http://localhost:3000/memos/{id}
