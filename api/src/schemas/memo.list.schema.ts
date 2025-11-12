@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-export const ListQuerySchema = z
+export const MemoListQuerySchema = z
   .object({
-    page: z.coerce.number().optional(),
-    limit: z.coerce.number().optional(),
+    page: z.coerce.number().int().positive().optional(),
+    limit: z.coerce.number().int().positive().optional(),
     query: z.string().trim().optional(),
   })
   .transform((paramValue) => {

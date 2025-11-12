@@ -49,11 +49,11 @@ describe('Read-only /memos routes (GET)', () => {
     expect(res.body.data[0].title).toBe('Memo 2');
   });
 
-  it('GET /memos normalizes bad paging inputs', async () => {
+  it('GET /memos with invalid query values', async () => {
     const res = await request(app).get('/memos?page=-9&limit=9999');
-    expect(res.status).toBe(200);
-    expect(res.body.page).toBe(1);
-    expect(res.body.limit).toBeLessThanOrEqual(100);
+    expect(res.status).toBe(400);
+    expect(res.body.page).toBeUndefined();
+    expect(res.body.limit).toBeUndefined();
   });
 
   it('GET /memos/:id returns memo when found', async () => {

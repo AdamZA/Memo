@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { AsyncMemoService } from '../services/memo.service';
-import { ListQuerySchema } from '../schemas/list.schema';
-import { MemoId as MemoIdSchema } from '../schemas/memo.schema';
+import { MemoListQuerySchema } from '../schemas/memo.list.schema';
+import { MemoIdSchema } from '../schemas/memo.schema';
 import { ERROR_MESSAGES } from '../constants/errors';
 
 export function createMemosController(service: AsyncMemoService) {
   // GET /memos
   async function listMemos(req: Request, res: Response, next: NextFunction) {
     try {
-      const parsed = ListQuerySchema.parse(req.query);
+      const parsed = MemoListQuerySchema.parse(req.query);
       const { data, total, page, limit } = await service.list(parsed);
       res.set('X-Total-Count', String(total));
 
@@ -23,7 +23,9 @@ export function createMemosController(service: AsyncMemoService) {
     try {
       const id = MemoIdSchema.parse(req.params.id);
       const memo = await service.get(id);
-      if (!memo) return res.status(404).json({ error: ERROR_MESSAGES.NOT_FOUND });
+      if (!memo) {
+        return res.status(404).json({ error: ERROR_MESSAGES.NOT_FOUND });
+      }
       return res.json(memo);
     } catch (err) {
       return next(err);
