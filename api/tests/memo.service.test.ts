@@ -53,13 +53,9 @@ describe('Memo Service layer tests', () => {
   });
 
   it('List memos tests for both insertion order and pagination', async () => {
-    const createPromises = [];
     for (let testIndex = 0; testIndex < 5; testIndex++) {
-      createPromises.push(
-        service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` }),
-      );
+      await service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
     }
-    await Promise.all(createPromises);
 
     // Check paginated results for expected titles and metadata
     const page1Data = await service.list({ page: 1, limit: 2 });
