@@ -55,7 +55,9 @@ describe('Memo Service layer tests', () => {
   it('List memos tests for both insertion order and pagination', async () => {
     const createPromises = [];
     for (let testIndex = 0; testIndex < 5; testIndex++) {
-      createPromises.push(service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` }));
+      createPromises.push(
+        service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` }),
+      );
     }
     await Promise.all(createPromises);
 
@@ -130,8 +132,8 @@ describe('Memo Service layer tests', () => {
     const created = await service.create({ title: 'Test title', body: 'Test body' });
 
     // First removal succeeds, returns true, can't fetch once deleted
-    expect(service.delete(created.id)).resolves.toBe(true);
-    expect(service.get(created.id)).resolves.toBeUndefined();
+    await expect(service.delete(created.id)).resolves.toBe(true);
+    await expect(service.get(created.id)).resolves.toBeUndefined();
 
     // Second removal fails to find entity, returns false
     await expect(service.delete(created.id)).resolves.toBe(false);
