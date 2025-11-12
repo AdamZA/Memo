@@ -134,6 +134,6 @@ describe('Memo Service layer tests', () => {
     expect(service.get(created.id)).resolves.toBeUndefined();
 
     // Second removal fails to find entity, returns false
-    expect(service.delete(created.id)).resolves.toBe(false);
+    await expect(service.delete(created.id)).resolves.toBe(false);
   });
 });
