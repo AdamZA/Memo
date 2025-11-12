@@ -13,7 +13,7 @@ type AppDependencies = {
 export function createApp(dependencies: AppDependencies) {
   const app = express();
   // Provide warning if both repo and service are provided (service depends on repo)
-  if (!!dependencies.repo && !!dependencies.service) {
+  if (dependencies.repo && dependencies.service) {
     console.warn(
       '[createApp] Both `repo` and `service` were provided. The `service` will be used and the `repo` will be ignored for service creation. ' +
         'Ensure that the service was created with the intended repo instance.',
