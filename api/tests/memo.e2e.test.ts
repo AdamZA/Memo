@@ -19,7 +19,7 @@ describe('Read-only /memos routes (GET)', () => {
   let repo: ReturnType<typeof createInMemoryMemoRepo>;
   let app: ReturnType<typeof createApp>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     idIndex = 0;
     mockedNowInMs = START_2025_IN_MS;
     repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
@@ -27,9 +27,9 @@ describe('Read-only /memos routes (GET)', () => {
     app = createApp({ service }); // Only service needed, as it relies on repo internally
 
     // Seed with 3 memos
-    service.create({ title: 'Memo 0', body: 'Body 0' });
-    service.create({ title: 'Memo 1', body: 'Body 1' });
-    service.create({ title: 'Memo 2', body: 'Body 2' });
+    await service.create({ title: 'Memo 0', body: 'Body 0' });
+    await service.create({ title: 'Memo 1', body: 'Body 1' });
+    await service.create({ title: 'Memo 2', body: 'Body 2' });
   });
 
   it('GET /memos returns paginated list with headers + metadata', async () => {
