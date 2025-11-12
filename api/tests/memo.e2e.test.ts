@@ -103,7 +103,7 @@ describe('Memo mutation routes (POST/PUT/DELETE)', () => {
     idIndex = 0;
     mockedNowInMs = START_2025_IN_MS;
 
-    const repo = await createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
     const service = createAsyncMemoService(repo);
 
     app = createApp({ service }); // Only service needed, as it relies on repo internally
