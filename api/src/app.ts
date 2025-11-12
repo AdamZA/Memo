@@ -1,10 +1,22 @@
 import express from 'express';
 import cors from 'cors';
-import memosRouter from './routes/memos';
 import { badJson, generalError, notFound } from './middleware/errors';
+import { createMemosRouter } from './routes/memos.routes';
+import { createMemoService, type MemoService } from './services/memo.service';
+import { createInMemoryMemoRepo, MemoRepo } from './repos/memo.repo';
 
-export function createApp() {
+type AppDependencies = {
+  repo?: MemoRepo;
+  service?: MemoService;
+};
+
+export function createApp(dependencies: AppDependencies) {
   const app = express();
+
+  // Setup dependencies with defaults if not provided
+  const repo = dependencies.repo ?? createInMemoryMemoRepo();
+  const service = dependencies.service ?? createMemoService(repo);
+  const memosRouter = createMemosRouter(service);
 
   // Vite’s default dev server port is 5173 - which we use for serving our UI
   app.use(cors({ origin: 'http://localhost:5173' }));
