@@ -16,7 +16,7 @@ node -v   # Expect v24.11.0
 ```
 
 ## Running the api
-Run the API, or alteratively run it in dev mode which watches for file changes and skips full type-checking for speed
+Run the API, or alternatively run it in dev mode which watches for file changes and skips full type-checking for speed
 ```bash
 npm run start
 npm run dev
