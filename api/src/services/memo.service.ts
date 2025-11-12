@@ -4,7 +4,7 @@ import type { ListArgs, ListResult, AsyncMemoRepo } from '../repos/memo.repo';
 export interface AsyncMemoService {
   list(params?: ListArgs): Promise<ListResult>;
   get(id: MemoId): Promise<Memo | undefined>;
-  create(input: MemoCreate): Promise<Memo>; // Unknown to enforce runtime validation
+  create(input: MemoCreate): Promise<Memo>;
   update(id: MemoId, input: MemoUpdate): Promise<Memo | undefined>;
   delete(id: MemoId): Promise<boolean>;
 }
