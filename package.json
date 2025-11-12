@@ -16,6 +16,8 @@
     "prepare": "chmod +x .husky/* || true",
     "format": "prettier -w .",
     "format:check": "prettier -c .",
+    "start:api": "npm --workspace api run start",
+    "start:web": "npm --workspace web run start",
     "typecheck:api": "npm --workspace api run typecheck",
     "typecheck:web": "npm --workspace web run typecheck",
     "typecheck:all": "npm run typecheck:api && npm run typecheck:web"

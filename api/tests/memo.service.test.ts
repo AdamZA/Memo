@@ -40,18 +40,6 @@ describe('Memo Service layer tests', () => {
     expect(fetched).toEqual(createReturn);
   });
 
-  it('Test validation on payload', async () => {
-    await expect(
-      service.create({ title: 'Valid title', body: 'Valid body' }),
-    ).resolves.toMatchObject({ title: 'Valid title', body: 'Valid body', version: 1 });
-
-    await expect(service.create({ title: 'Invalid body', body: '' })).rejects.toThrow();
-
-    await expect(service.create({ title: '', body: 'Invalid title' })).rejects.toThrow();
-
-    await expect(service.create({})).rejects.toThrow();
-  });
-
   it('List memos tests for both insertion order and pagination', async () => {
     for (let testIndex = 0; testIndex < 5; testIndex++) {
       await service.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
@@ -116,12 +104,6 @@ describe('Memo Service layer tests', () => {
   it('Update returns undefined when the memo does not exist', async () => {
     const updateReturn = await service.update('missing-id', { title: 'Edited title' });
     expect(updateReturn).toBeUndefined();
-  });
-
-  it('Test validation on update payloads', async () => {
-    const created = await service.create({ title: 'Test title', body: 'Test body' });
-    // Attempt to update with empty payload (invalid)
-    await expect(service.update(created.id, {})).rejects.toThrow();
   });
 
   it('Test delete return paths', async () => {

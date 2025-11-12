@@ -10,6 +10,12 @@ Full-stack Memo Application using React/React Query/Express.js/Rest, as a part o
 npm install
 ```
 
+### Running the API or Web
+```bash
+npm run dev:api
+npm run dev:web
+```
+
 ### Prettier, pre-commit and pre-push hooks
 
 There are 2 git hooks set up for this repo:
@@ -55,3 +61,5 @@ npm run test:all ## both api server and ui tests
 ### Future additions
 
 - Add translation (i18n) and basic localization
+- Real database integration
+- 100% test path coverage
