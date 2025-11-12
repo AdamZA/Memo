@@ -123,7 +123,7 @@ describe('Memo Service layer tests', () => {
   it('Test validation on update payloads', async () => {
     const created = await service.create({ title: 'Test title', body: 'Test body' });
     // Attempt to update with empty payload (invalid)
-    expect(service.update(created.id, {})).rejects.toThrow();
+    await expect(service.update(created.id, {})).rejects.toThrow();
   });
 
   it('Test delete return paths', async () => {
