@@ -36,7 +36,7 @@ export function createMemoService(repo: MemoRepo): MemoService {
 
   // 'Delete' is a reserved word in JS/TS, so we use 'remove' internally
   async function remove(id: MemoId): Promise<boolean> {
-    return repo.delete(id);
+    return await repo.delete(id);
   }
 
   return { list, get, create, update, delete: remove };
