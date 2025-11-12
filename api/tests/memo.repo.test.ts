@@ -101,11 +101,11 @@ describe('In-memory Memo Repository tests', () => {
     const createdReturn = await repo.create({ title: 'To remove', body: 'Test' });
 
     // Entity found, deleted, can't be found on GET following deletion
-    expect(repo.delete(createdReturn.id)).resolves.toBe(true);
-    expect(repo.get(createdReturn.id)).resolves.toBeUndefined();
+    await expect(repo.delete(createdReturn.id)).resolves.toBe(true);
+    await expect(repo.get(createdReturn.id)).resolves.toBeUndefined();
 
     // Entity not found, nothing deleted
-    expect(repo.delete(createdReturn.id)).resolves.toBe(false);
+    await expect(repo.delete(createdReturn.id)).resolves.toBe(false);
   });
 
   it('Test normalization of pagination bounds', async () => {
