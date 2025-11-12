@@ -36,5 +36,5 @@ export function generalError(err: any, _req: Request, res: Response, _next: Next
   }
 
   console.error('Unexpected error:', err);
-  return res.status(500).json({ error: 'Internal Server Error' });
+  return res.status(500).json({ error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
 }
