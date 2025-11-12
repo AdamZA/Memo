@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { MemoListQuerySchema } from '../src/schemas/memo.list.schema';
 
 describe('MemoListQuerySchema tests', () => {
-  it('Test that numeric strings and floats are caught at a schema level', () => {
+  it('Test that numeric strings and numeric floats are caught at a schema level', () => {
     expect(() => MemoListQuerySchema.parse({ page: '2.9', limit: 15.2, query: 'abc' })).toThrow();
   });
 
