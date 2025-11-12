@@ -33,7 +33,7 @@ export function createAsyncMemoService(repo: AsyncMemoRepo): AsyncMemoService {
   async function update(id: MemoId, input: unknown): Promise<Memo | undefined> {
     // Validate runtime input. Will throw ZodError if invalid.
     const parsed = MemoUpdateSchema.parse(input);
-    return repo.update(id, parsed);
+    return await repo.update(id, parsed);
   }
 
   // 'Delete' is a reserved word in JS/TS, so we use 'remove' internally
