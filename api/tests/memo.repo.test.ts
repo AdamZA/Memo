@@ -39,7 +39,7 @@ describe('In-memory Memo Repository tests', () => {
     const repo = createInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
 
     for (let testIndex = 0; testIndex < 5; testIndex++) {
-      repo.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
+      await repo.create({ title: `title-${testIndex}`, body: `body-${testIndex}` });
     }
 
     const page1 = await repo.list({ page: 1, limit: 2 });
