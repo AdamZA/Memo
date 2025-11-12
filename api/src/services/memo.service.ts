@@ -21,7 +21,7 @@ export function createAsyncMemoService(repo: AsyncMemoRepo): AsyncMemoService {
   }
 
   async function get(id: MemoId): Promise<Memo | undefined> {
-    return repo.get(id);
+    return await repo.get(id);
   }
 
   async function create(input: unknown): Promise<Memo> {
