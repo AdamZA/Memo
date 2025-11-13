@@ -28,7 +28,7 @@ npm run dev
 ```
 
 ## Running tests
-Vitest and Supertest used for testing
+Vitest and @testing-library/react used for testing
 ```bash
 npm run test
 ```
