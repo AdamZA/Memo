@@ -196,7 +196,7 @@ Method not allowed (Included -i response to see Allowed headers)
 curl -i -X DELETE http://localhost:3000/memos
 ```
 Example response:
-```json
+```text
 HTTP/1.1 405 Method Not Allowed
 X-Powered-By: Express
 Access-Control-Allow-Origin: http://localhost:5173
@@ -208,6 +208,8 @@ ETag: W/"1e-IBweH4Vj7lDovJDf9KQOpDMeplg"
 Date: Wed, 12 Nov 2025 23:29:03 GMT
 Connection: keep-alive
 Keep-Alive: timeout=5
+```
+```bash
 {
   "error": "Method Not Allowed"
 }
