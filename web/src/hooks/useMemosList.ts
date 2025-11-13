@@ -15,7 +15,6 @@ export function useMemosList(params: MemoListParams) {
   return useQuery<MemoListResponse, Error>({
     queryKey: ['memos', params] as const,
     queryFn: () => listMemos(params),
-    placeholderData: makeEmptyList(params),
     initialData: makeEmptyList(params),
     refetchInterval: REFRESH_INTERVAL_MS,
   });

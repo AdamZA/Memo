@@ -62,7 +62,7 @@ Request/Response flow:
 ## Seeding data
 If the API is running on port 3000, from /api you can run:
 ```bash
-chmod +x seed.sh
+chmod +x seed
 ./seed 50   # makes 50 memos
 ./seed      # defaults to 30
 ```
