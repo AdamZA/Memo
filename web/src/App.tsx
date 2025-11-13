@@ -40,7 +40,7 @@ export default function App() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPage(1);
     }
-  }, [data?.total, data?.limit, page]);
+  }, [data, page]);
 
   const total = data?.total ?? 0;
   const totalPages = total > 0 ? Math.ceil(total / limit) : 1;
