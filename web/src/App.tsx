@@ -29,6 +29,19 @@ export default function App() {
     query,
   });
 
+  useEffect(() => {
+    if (!data) return;
+
+    const { total, limit } = data;
+    const maxPage = Math.max(1, Math.ceil(total / limit));
+
+    if (page > maxPage) {
+      // Intentionally synchronous to ensure refetch with valid page
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPage(1);
+    }
+  }, [data?.total, data?.limit, page]);
+
   const total = data?.total ?? 0;
   const totalPages = total > 0 ? Math.ceil(total / limit) : 1;
   const canGoPrev = page > 1;
