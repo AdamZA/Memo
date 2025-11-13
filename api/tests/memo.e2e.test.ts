@@ -99,7 +99,7 @@ describe('Memo read-only routes (GET)', () => {
 describe('Memo mutation routes (POST/PUT/DELETE)', () => {
   let app: ReturnType<typeof createApp>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     idIndex = 0;
     mockedNowInMs = START_2025_IN_MS;
 
