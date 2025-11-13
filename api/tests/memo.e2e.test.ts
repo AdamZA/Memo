@@ -15,7 +15,7 @@ const START_2025_IN_MS = Date.UTC(2025, 0, 1, 0, 0, 0);
 let mockedNowInMs = START_2025_IN_MS;
 const testClock = () => mockedNowInMs;
 
-describe('Read-only /memos routes (GET)', () => {
+describe('Memo read-only routes (GET)', () => {
   let repo: ReturnType<typeof createAsyncInMemoryMemoRepo>;
   let app: ReturnType<typeof createApp>;
 
@@ -93,5 +93,110 @@ describe('Read-only /memos routes (GET)', () => {
     expect(res.status).toBe(200);
     expect(res.body.total).toBe(0);
     expect(res.body.data).toEqual([]);
+  });
+});
+
+describe('Memo mutation routes (POST/PUT/DELETE)', () => {
+  let app: ReturnType<typeof createApp>;
+
+  beforeEach(async () => {
+    idIndex = 0;
+    mockedNowInMs = START_2025_IN_MS;
+
+    const repo = createAsyncInMemoryMemoRepo({ idGen: testIdGen, clock: testClock });
+    const service = createAsyncMemoService(repo);
+
+    app = createApp({ service }); // Only service needed, as it relies on repo internally
+  });
+
+  it('POST /memos creates a memo and returns 201 with body', async () => {
+    const createResponse = await request(app)
+      .post('/memos')
+      .send({ title: 'Test title', body: 'Test body' });
+
+    expect(createResponse.status).toBe(201);
+    expect(createResponse.body.id).toBe('1'.repeat(21));
+    expect(createResponse.body.title).toBe('Test title');
+    expect(createResponse.body.body).toBe('Test body');
+    expect(createResponse.body.version).toBe(1);
+    expect(createResponse.body.createdAt).toBeDefined();
+    expect(createResponse.body.updatedAt).toBeDefined();
+  });
+
+  it('POST /memos rejects invalid payload with 400', async () => {
+    const invalidCreateResponse = await request(app).post('/memos').send({ title: '', body: '' }); // Violates MemoCreateSchema
+
+    expect(invalidCreateResponse.status).toBe(400);
+    expect(invalidCreateResponse.body.error).toBe(ERROR_MESSAGES.VALIDATION_FAILED); // generalError uses this wording
+    expect(Array.isArray(invalidCreateResponse.body.details)).toBe(true);
+  });
+
+  it('PUT /memos/:id updates existing memo and bumps version', async () => {
+    // Create initial memo
+    const createResponse = await request(app)
+      .post('/memos')
+      .send({ title: 'Original', body: 'Body' });
+
+    const id = createResponse.body.id;
+
+    // Advance mock time by 5 minutes for updatedAt
+    mockedNowInMs = Date.UTC(2025, 0, 1, 0, 5, 0);
+
+    const updateRes = await request(app).put(`/memos/${id}`).send({ title: 'Edited' });
+
+    expect(updateRes.status).toBe(200);
+    expect(updateRes.body.id).toBe(id);
+    expect(updateRes.body.title).toBe('Edited');
+    expect(updateRes.body.body).toBe('Body');
+    expect(updateRes.body.version).toBe(2);
+    expect(updateRes.body.updatedAt).not.toBe(createResponse.body.updatedAt);
+  });
+
+  it('PUT /memos/:id rejects empty update payload with 400', async () => {
+    const createResponse = await request(app)
+      .post('/memos')
+      .send({ title: 'Original', body: 'Body' });
+
+    const id = createResponse.body.id;
+
+    const invalidUpdateResponse = await request(app).put(`/memos/${id}`).send({}); // MemoUpdateSchema should reject
+
+    expect(invalidUpdateResponse.status).toBe(400);
+    expect(invalidUpdateResponse.body.error).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+  });
+
+  it('PUT /memos/:id returns 404 when memo is not found', async () => {
+    const missingId = '9'.repeat(21);
+
+    const invalidUpdateResponse = await request(app)
+      .put(`/memos/${missingId}`)
+      .send({ title: 'Test' });
+
+    expect(invalidUpdateResponse.status).toBe(404);
+    expect(invalidUpdateResponse.body).toEqual({ error: ERROR_MESSAGES.NOT_FOUND });
+  });
+
+  it('DELETE /memos/:id returns 204 on successful delete', async () => {
+    const createResponse = await request(app)
+      .post('/memos')
+      .send({ title: 'Delete me', body: 'Body' });
+
+    const id = createResponse.body.id;
+
+    const deleteResponse = await request(app).delete(`/memos/${id}`);
+    expect(deleteResponse.status).toBe(204);
+    expect(deleteResponse.body).toEqual({}); // No body on 204
+
+    // Subsequent GET should 404
+    const getResponse = await request(app).get(`/memos/${id}`);
+    expect(getResponse.status).toBe(404);
+  });
+
+  it('DELETE /memos/:id returns 404 when memo not found', async () => {
+    const missingId = '9'.repeat(21);
+
+    const deleteResponse = await request(app).delete(`/memos/${missingId}`);
+    expect(deleteResponse.status).toBe(404);
+    expect(deleteResponse.body).toEqual({ error: ERROR_MESSAGES.NOT_FOUND });
   });
 });

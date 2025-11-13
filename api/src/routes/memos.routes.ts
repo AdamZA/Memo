@@ -8,10 +8,9 @@ export function createMemosRouter(service: AsyncMemoService) {
   const { listMemos, getMemoById, createMemo, updateMemo, deleteMemo } =
     createMemosController(service);
 
+  // Define routes and associate controller methods
   router.get('/', listMemos);
   router.get('/:id', getMemoById);
-
-  // TODO: INTERVIEW-07 - Implement the routes for creating, updating, and deleting memos
   router.post('/', createMemo);
   router.put('/:id', updateMemo);
   router.delete('/:id', deleteMemo);
