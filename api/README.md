@@ -1,4 +1,8 @@
 # Memo API
+API implemented using Node + Express
+Zod used for validation layer
+Unit tests written using Vitest and Supertest
+Datastore implemented as a Map, wrapped asynchronously, using NanoID URL-safe identifiers
 
 ## Environment setup
 
@@ -6,13 +10,17 @@ Project developed using **Node v24.11.0 (LTS, 2025-11-09)**.
 Please use **nvm** for Node version management to ensure consistent runtime behaviour.
 
 ### Node
-
 Install Node 24 (if not already available)
 
 ```bash
 nvm install 24
 nvm use 24
 node -v   # Expect v24.11.0
+```
+
+### Install dependencies
+```bash
+npm install
 ```
 
 ## Running the api
@@ -23,7 +31,6 @@ npm run dev
 ```
 
 ## Running tests
-
 Vitest and Supertest used for testing
 
 ```bash
@@ -52,8 +59,26 @@ Request/Response flow:
 - Middleware processes any thrown errors
 - Express returns the final response to the caller
 
-## cURL references
+## Seeding data
+If the API is running on port 3000, from /api you can run:
+```bash
+chmod +x seed
+./seed 50   # makes 50 memos
+./seed      # defaults to 30
+```
+Else you can paste this into your shell:
+```bash
+for i in {1..30}; do
+  curl -X POST "http://localhost:3000/memos" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"title\": \"Seed memo $i\",
+      \"body\": \"This is seeded memo number $i.\"
+    }"
+done
+```
 
+## cURL references
 Health check:
 ```bash
 curl http://localhost:3000/health
