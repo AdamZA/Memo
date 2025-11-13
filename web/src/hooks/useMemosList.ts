@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { listMemos, type MemoListParams, type MemoListResponse } from '../api/memoClient';
-import { DEFAULT_PAGE, DEFAULT_PAGE_LIMIT } from '../constants/memoConstants';
+import { DEFAULT_PAGE, DEFAULT_PAGE_LIMIT, REFRESH_INTERVAL_MS } from '../constants/memoConstants';
 
 function makeEmptyList(params: MemoListParams): MemoListResponse {
   return {
@@ -16,5 +16,7 @@ export function useMemosList(params: MemoListParams) {
     queryKey: ['memos', params] as const,
     queryFn: () => listMemos(params),
     placeholderData: makeEmptyList(params),
+    initialData: makeEmptyList(params),
+    refetchInterval: REFRESH_INTERVAL_MS,
   });
 }
