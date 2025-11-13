@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Default to 30 if no argument is provided
+memoCount=${1:-30}
+
+for ((i=1; i<=memoCount; i++)); do
+  curl -X POST "http://localhost:3000/memos" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"title\": \"Seed memo $i\",
+      \"body\": \"This is seeded memo number $i.\"
+    }"
+done

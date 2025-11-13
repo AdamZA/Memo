@@ -59,6 +59,25 @@ Request/Response flow:
 - Middleware processes any thrown errors
 - Express returns the final response to the caller
 
+## Seeding data
+If the API is running on port 3000, from /api you can run:
+```bash
+chmod +x seed.sh
+./seed 50   # makes 50 memos
+./seed      # defaults to 30
+```
+Else you can paste this into your shell:
+```bash
+for i in {1..30}; do
+  curl -X POST "http://localhost:3000/memos" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"title\": \"Seed memo $i\",
+      \"body\": \"This is seeded memo number $i.\"
+    }"
+done
+```
+
 ## cURL references
 Health check:
 ```bash
