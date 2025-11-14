@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import './App.css';
 import { useMemoDetails } from './hooks/useMemoDetails';
 import { useDeleteMemo } from './hooks/useMemoMutations';
-import { useQueryClient } from '@tanstack/react-query';
 import { ConfirmDialog } from './ConfirmDialog';
 import { useState } from 'react';
 
@@ -10,12 +9,12 @@ export function MemoDetailsPage() {
   const params = useParams<{ id: string }>();
   const id = params.id ?? '';
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useMemoDetails(id);
   const deleteMutation = useDeleteMemo();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   function openConfirm() {
     setIsConfirmOpen(true);
@@ -29,16 +28,13 @@ export function MemoDetailsPage() {
     if (!id) return;
 
     try {
+      openConfirm();
       await deleteMutation.mutateAsync(id);
-
-      // ensure list is fresh when we go back
-      await queryClient.invalidateQueries({ queryKey: ['memos'], exact: false });
-
       closeConfirm();
       navigate('/');
     } catch (err) {
       console.error(err);
-      closeConfirm();
+      setDeleteError('Unable to delete memo. Please try again.');
     }
   }
 
@@ -99,7 +95,7 @@ export function MemoDetailsPage() {
                   <th scope="row">Title</th>
                   <td>{data.title}</td>
                 </tr>
-                
+
                 <tr>
                   <th scope="row">Body</th>
                   <td>
@@ -132,6 +128,7 @@ export function MemoDetailsPage() {
         cancelLabel="Cancel"
         onConfirm={handleConfirmDelete}
         onCancel={closeConfirm}
+        errorMessage={deleteError}
       />
     </div>
   );

@@ -2,48 +2,45 @@ import './App.css';
 
 interface ConfirmDialogProps {
   open: boolean;
-  title?: string;
+  title: string;
   message: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
+  confirmLabel: string;
+  cancelLabel: string;
   onConfirm: () => void;
   onCancel: () => void;
+  errorMessage?: string | null;
 }
 
 export function ConfirmDialog({
   open,
-  title = 'Confirm',
+  title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
+  errorMessage,
 }: ConfirmDialogProps) {
   if (!open) return null;
 
   return (
-    <div className="modal-backdrop" role="presentation" onClick={onCancel}>
-      <div
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="confirm-dialog-title"
-        aria-describedby="confirm-dialog-message"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id="confirm-dialog-title" className="modal-title">
-          {title}
-        </h2>
-        <p id="confirm-dialog-message" className="modal-message">
-          {message}
-        </p>
+    <div className="modal-backdrop" role="dialog" aria-modal="true">
+      <div className="modal">
+        <h2 className="modal-title">{title}</h2>
+        <p className="modal-message">{message}</p>
+
+        {errorMessage && (
+          <div className="status status-error" style={{ marginBottom: '0.75rem' }}>
+            <p>{errorMessage}</p>
+          </div>
+        )}
 
         <div className="modal-actions">
-          <button type="button" className="danger-button" onClick={onConfirm}>
-            {confirmLabel}
-          </button>
           <button type="button" className="secondary-button" onClick={onCancel}>
             {cancelLabel}
+          </button>
+          <button type="button" className="danger-button" onClick={onConfirm}>
+            {confirmLabel}
           </button>
         </div>
       </div>

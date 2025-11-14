@@ -15,6 +15,8 @@ export default function App() {
   const [queryInput, setQueryInput] = useState('');
   const [query, setQuery] = useState('');
 
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   // Debounce search
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -41,21 +43,25 @@ export default function App() {
 
   function openDeleteConfirm(id: string) {
     setPendingDeleteId(id);
+    setDeleteError(null); // clear any previous error
   }
 
   function closeDeleteConfirm() {
     setPendingDeleteId(null);
+    setDeleteError(null);
   }
 
   async function handleConfirmDelete() {
     if (!pendingDeleteId) return;
 
     try {
+      setDeleteError(null);
       await deleteMutation.mutateAsync(pendingDeleteId);
       closeDeleteConfirm();
     } catch (err) {
       console.error(err);
-      closeDeleteConfirm();
+      setDeleteError('Unable to delete memo. Please try again.');
+      // keep dialog open so the user sees the error
     }
   }
 
@@ -194,6 +200,7 @@ export default function App() {
         cancelLabel="Cancel"
         onConfirm={handleConfirmDelete}
         onCancel={closeDeleteConfirm}
+        errorMessage={deleteError}
       />
     </div>
   );
