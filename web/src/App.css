@@ -1,3 +1,5 @@
+/* --- Layout / Shell --- */
+
 .app-root {
   max-width: 960px;
   margin: 2rem auto;
@@ -6,6 +8,12 @@
   padding: 1.75rem 2rem;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }
+
+.content {
+  margin-top: 0.5rem;
+}
+
+/* --- Header --- */
 
 .app-header {
   display: flex;
@@ -26,18 +34,20 @@
   font-size: 0.95rem;
 }
 
+.app-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* --- Toolbar / Search / Pills --- */
+
 .toolbar {
   display: flex;
   gap: 1rem;
   align-items: center;
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
-}
-
-.search-container {
-  flex-grow: 1;
-  flex-basis: 0;
-  max-width: none;
 }
 
 .search-form {
@@ -106,9 +116,7 @@
   color: #374151;
 }
 
-.content {
-  margin-top: 0.5rem;
-}
+/* --- Status / Feedback --- */
 
 .status {
   padding: 1.25rem;
@@ -127,6 +135,11 @@
 .status-error {
   background: #fef2f2;
   color: #b91c1c;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .status-empty {
@@ -154,6 +167,8 @@
     transform: rotate(360deg);
   }
 }
+
+/* --- Main table (dashboard list) --- */
 
 .memo-table {
   width: 100%;
@@ -189,6 +204,98 @@
   text-overflow: ellipsis;
 }
 
+/* --- Detail table --- */
+
+.memo-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #e5e7eb; /* outer border */
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.memo-detail-table th,
+.memo-detail-table td {
+  padding: 10px 12px;
+  vertical-align: top;
+
+  /* Show all grid lines */
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* Soft grey background for keys */
+.memo-detail-table th {
+  text-align: left;
+  width: 160px;
+  font-weight: 600;
+  background: #f9fafb;
+  color: #374151;
+}
+
+/* Clean last row (optional) */
+.memo-detail-table tr:last-child th,
+.memo-detail-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Buttons / Actions --- */
+
+.primary-button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.secondary-button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.danger-button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: #dc2626;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Links styled as buttons: remove underline */
+.primary-button,
+.secondary-button,
+.danger-button,
+.link-button,
+.table-action-button {
+  text-decoration: none !important;
+}
+
+/* Actions in the list table */
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-action-button {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+/* --- Pagination --- */
+
 .pagination {
   margin-top: 0.75rem;
   display: flex;
@@ -219,6 +326,93 @@
   font-size: 0.85rem;
   color: #6b7280;
 }
+
+/* --- Editor form (Create / Edit) --- */
+
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 520px;
+  margin-top: 0.5rem;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.editor-field span {
+  font-weight: 500;
+}
+
+.editor-field input,
+.editor-field textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.editor-field input:focus,
+.editor-field textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* --- Modal --- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: #0b1120;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  max-width: 24rem;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.modal-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.modal-message {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* --- Responsive tweaks --- */
 
 @media (max-width: 640px) {
   .app-root {

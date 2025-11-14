@@ -1,16 +1,17 @@
 # Memo API
-API implemented using Node + Express
-Zod used for validation layer
-Unit tests written using Vitest and Supertest
-Datastore implemented as a Map, wrapped asynchronously, using NanoID URL-safe identifiers
 
-## Environment setup
+In-memory REST API implemented using Node.js, Express and TypeScript.  
+Zod is used for request validation, and the API is tested with Vitest and Supertest.  
+The datastore is an asynchronous wrapper around a Map, using NanoID URL-safe identifiers.
 
-Project developed using **Node v24.11.0 (LTS, 2025-11-09)**.  
-Please use **nvm** for Node version management to ensure consistent runtime behaviour.
+---
 
-### Node
-Install Node 24 (if not already available)
+## Environment Setup
+
+This project was developed using Node v24.11.0 (LTS, 2025-11-09).  
+It is recommended to use nvm to ensure consistent execution across environments.
+
+### Install Node
 
 ```bash
 nvm install 24
@@ -19,54 +20,106 @@ node -v   # Expect v24.11.0
 ```
 
 ### Install dependencies
+
 ```bash
 npm install
 ```
 
-## Running the api
-Run the API, or alternatively run it in dev mode which watches for file changes and skips full type-checking for speed
+---
+
+## Running the API
+
+Start normally:
+
 ```bash
 npm run start
+```
+
+Start in development mode (auto-reload, faster builds):
+
+```bash
 npm run dev
 ```
 
-## Running tests
-Vitest and Supertest used for testing
+---
+
+## Running Tests
+
+Vitest and Supertest are used for testing.
 
 ```bash
 npm run test
 ```
 
-## Design
-### Data flow
-Startup flow: (index.ts)
-- Initialize the in-memory repository implementation
-- Create service layer and inject the repository
-- Build the router using the service
-- Register the global middleware (error handling)
+---
 
-Request/Response flow:
-- Request enters Express router
-- Router passes the request through to the controller
-- Controller validates input against Zod schema definitions
-    - On failure, throw error for middleware to format
-    - On success, passes typed input data to service layer
-- Service layer contains business logic and calls repository to do CRUD operations
-    - Currently straight passthrough, but allows easy expansion and external integrations in the future
-- Repo layer interacts with the datastore, being an in-memory Map in this case, and returns response
-- Response surfaces up through service layer
-- Response hits Controller, which constructs the res.status(...).json(...)
-- Middleware processes any thrown errors
-- Express returns the final response to the caller
+## Project Structure
 
-## Seeding data
-If the API is running on port 3000, from /api you can run:
+```
+api/
+  src/
+    index.ts               Entry point
+    server.ts              Express app creation
+    router.ts              Route definitions
+    controllers/           Request validation and response shaping
+    services/              Business logic
+    repositories/          Data persistence layer (Map datastore)
+    schemas/               Zod input validation
+    errors/                Error classes and middleware
+  test/
+    integration/           Supertest integration tests
+    unit/                  Unit tests for controllers/services/repo
+```
+
+---
+
+## Design Overview
+
+### Startup Flow (index.ts)
+
+1. Initialize the Map-based datastore
+2. Create repository instance
+3. Create service and inject repository
+4. Build controller layer
+5. Build router using controllers
+6. Apply global middleware (JSON body parsing, error handling)
+7. Start Express server
+
+### Request/Response Lifecycle
+
+1. Request is received by Express router
+2. Router forwards request to the appropriate controller
+3. Controller validates input using Zod
+   - On validation failure: error middleware returns a structured JSON error
+   - On success: controller passes sanitized data to the service
+4. Service handles business logic and calls the repository
+5. Repository performs CRUD operations against the Map datastore
+6. Service returns result to controller
+7. Controller constructs final JSON response
+8. Global middleware handles any thrown errors consistently
+
+### Why this design?
+
+The API follows a layered architecture (controller → service → repository) to:
+- Keep responsibilities isolated
+- Make business rules testable
+- Allow easy swapping of the repository for a real database later
+- Ensure strict validation and typed data flow end-to-end
+
+---
+
+## Seeding Data
+
+If the API is running on port 3000:
+
 ```bash
 chmod +x seed
-./seed 50   # makes 50 memos
+./seed 50   # creates 50 memos
 ./seed      # defaults to 30
 ```
-Else you can paste this into your shell:
+
+Alternatively, run this snippet manually:
+
 ```bash
 for i in {1..30}; do
   curl -X POST "http://localhost:3000/memos" \
@@ -78,164 +131,63 @@ for i in {1..30}; do
 done
 ```
 
-## cURL references
-Health check:
+---
+
+## Endpoints Overview
+
+### Health Check
 ```bash
-curl http://localhost:3000/health
+GET /health
 ```
-Example response:
+Example:
 ```json
 {"ok": true}
 ```
 
-Create memo:
+### Create Memo
 ```bash
-curl -X POST http://localhost:3000/memos \
-  -H "Content-Type: application/json" \
-  -d '{"title":"My first memo","body":"Hello world"}'
+POST /memos
 ```
-Example response:
+
+### List Memos
+```bash
+GET /memos
+```
+
+Supports pagination and search:
+```bash
+GET /memos?page=1&limit=2&query=hello
+```
+
+### Get Memo by ID
+```bash
+GET /memos/:id
+```
+
+### Update Memo
+```bash
+PUT /memos/:id
+```
+
+### Delete Memo
+```bash
+DELETE /memos/:id
+```
+
+### Invalid JSON example
+Returns:
 ```json
-{
-  "id": "N5PePgRbThar0eGkMNFio",
-  "title": "My first memo",
-  "body": "Hello world",
-  "createdAt": "2025-11-12T23:20:25.613Z",
-  "updatedAt": "2025-11-12T23:20:25.613Z",
-  "version": 1
-}
+{"error":"Invalid JSON"}
 ```
 
-List memos:
-```bash
-curl http://localhost:3000/memos
-```
-Example response:
+### Not Found
 ```json
-{
-  "data": [
-    {
-      "id": "N5PePgRbThar0eGkMNFio",
-      "title": "My first memo",
-      "body": "Hello world",
-      "createdAt": "2025-11-12T23:20:25.613Z",
-      "updatedAt": "2025-11-12T23:20:25.613Z",
-      "version": 1
-    }
-  ],
-  "total": 1,
-  "page": 1,
-  "limit": 20
-}
+{"error":"Not Found"}
 ```
 
-List memos with query and pagination parameters:
-```bash
-curl "http://localhost:3000/memos?page=1&limit=2&query=hello"
-```
-Example response:
+### Method Not Allowed
 ```json
-{
-  "data": [
-    {
-      "id": "Vxn-pe4X36RWeoyeA6Ch1",
-      "title": "My first memo",
-      "body": "Hello world",
-      "createdAt": "2025-11-12T23:37:14.454Z",
-      "updatedAt": "2025-11-12T23:37:14.454Z",
-      "version": 1
-    }
-  ],
-  "total": 1,
-  "page": 1,
-  "limit": 2
-}
+{"error":"Method Not Allowed"}
 ```
 
-Get memo by ID:
-```bash
-curl http://localhost:3000/memos/{id}
-```
-Example response:
-```json
-{
-  "id": "N5PePgRbThar0eGkMNFio",
-  "title": "My first memo",
-  "body": "Hello world",
-  "createdAt": "2025-11-12T23:20:25.613Z",
-  "updatedAt": "2025-11-12T23:20:25.613Z",
-  "version": 1
-}
-```
-
-Update memo:
-```bash
-curl -X PUT http://localhost:3000/memos/{id} \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Updated title"}'
-```
-Example response:
-```json
-{
-  "id": "N5PePgRbThar0eGkMNFio",
-  "title": "Updated title",
-  "body": "Hello world",
-  "createdAt": "2025-11-12T23:20:25.613Z",
-  "updatedAt": "2025-11-12T23:26:00.361Z",
-  "version": 2
-}
-```
-
-Delete memo:
-```bash
-curl -X DELETE http://localhost:3000/memos/{id}
-```
-(No expected response)
-
-Invalid JSON payload:
-```bash
-curl -X POST http://localhost:3000/memos \
- -H "Content-Type: application/json" \
- -d '{"bad": "data"'
-```
-Example response:
-```json
-{
-  "error": "Invalid JSON"
-}
-```
-
-Unsupported path:
-```bash
-curl http://localhost:3000/does-not-exist
-```
-Example response:
-```json
-{
-  "error": "Not Found"
-}
-```
-
-Method not allowed (Included -i response to see Allowed headers)
-```bash
-curl -i -X DELETE http://localhost:3000/memos
-```
-Example response:
-```text
-HTTP/1.1 405 Method Not Allowed
-X-Powered-By: Express
-Access-Control-Allow-Origin: http://localhost:5173
-Vary: Origin
-Allow: GET, POST
-Content-Type: application/json; charset=utf-8
-Content-Length: 30
-ETag: W/"1e-IBweH4Vj7lDovJDf9KQOpDMeplg"
-Date: Wed, 12 Nov 2025 23:29:03 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
-```
-```bash
-{
-  "error": "Method Not Allowed"
-}
-```
+---

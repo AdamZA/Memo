@@ -1,5 +1,3 @@
-import { DEFAULT_PAGE, DEFAULT_PAGE_LIMIT } from '../constants/memoConstants';
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
 // Memo types based on API schema
@@ -27,40 +25,69 @@ export type MemoListParams = {
   query?: string;
 };
 
+export type MemoCreateInput = {
+  title: string;
+  body: string;
+};
+
+export type MemoUpdateInput = {
+  title?: string;
+  body?: string;
+};
+
 // API client functions
 
 // Fetch memos from the API with (optional) pagination and (optional) query filtering
-export async function listMemos(params: MemoListParams = {}): Promise<MemoListResponse> {
-  const url = new URL('/memos', API_BASE_URL);
+async function handleJson<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Request failed with ${res.status}: ${text || res.statusText}`);
+  }
+  return res.json() as Promise<T>;
+}
 
-  if (params.page !== undefined) url.searchParams.set('page', String(params.page));
-  if (params.limit !== undefined) url.searchParams.set('limit', String(params.limit));
-  if (params.query && params.query.trim().length > 0) {
+export async function listMemos(params: MemoListParams): Promise<MemoListResponse> {
+  const url = new URL(`${API_BASE_URL}/memos`);
+  url.searchParams.set('page', String(params.page));
+  url.searchParams.set('limit', String(params.limit));
+  if (params.query?.trim()) {
     url.searchParams.set('query', params.query.trim());
   }
 
-  const response = await fetch(url.toString());
+  const res = await fetch(url.toString());
+  return handleJson<MemoListResponse>(res);
+}
 
-  if (!response.ok) {
-    // Surface error to UI
-    const text = await response.text().catch(() => '');
-    throw new Error(`Failed to fetch memos (${response.status}): ${text || 'Unknown error'}`);
+export async function getMemo(id: string): Promise<Memo> {
+  const res = await fetch(`${API_BASE_URL}/memos/${encodeURIComponent(id)}`);
+  return handleJson<Memo>(res);
+}
+
+export async function createMemo(input: MemoCreateInput): Promise<Memo> {
+  const res = await fetch(`${API_BASE_URL}/memos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+  return handleJson<Memo>(res);
+}
+
+export async function updateMemo(id: string, patch: MemoUpdateInput): Promise<Memo> {
+  const res = await fetch(`${API_BASE_URL}/memos/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+  });
+  return handleJson<Memo>(res);
+}
+
+export async function deleteMemo(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/memos/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok && res.status !== 404) {
+    // 404 is safe to ignore client-side
+    const text = await res.text();
+    throw new Error(`Delete failed with ${res.status}: ${text || res.statusText}`);
   }
-
-  const responseJson = await response.json();
-
-  // Try to get total from header first (preferred), then fallback to body
-  const totalHeader = response.headers.get('x-total-count');
-  const totalFromHeader = totalHeader ? Number(totalHeader) : undefined;
-
-  // Return normalized MemoListResponse
-  return {
-    data: responseJson.data ?? responseJson, // Handle case where body is just an array
-    total:
-      totalFromHeader ??
-      responseJson.total ??
-      (Array.isArray(responseJson.data) ? responseJson.data.length : 0),
-    page: responseJson.page ?? params.page ?? DEFAULT_PAGE,
-    limit: responseJson.limit ?? params.limit ?? DEFAULT_PAGE_LIMIT,
-  };
 }
