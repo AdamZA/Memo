@@ -37,15 +37,6 @@ export default function App() {
   const totalPages = total > 0 ? Math.ceil(total / limit) : 1;
   const canGoPrev = page > 1;
   const canGoNext = page < totalPages;
-
-  // Pagination edge case: reset page if current page exceeds max page
-  useEffect(() => {
-    if (!data) return;
-    const maxPage = Math.max(1, Math.ceil(data.total / limit));
-    if (page > maxPage) {
-      setPage(1);
-    }
-  }, [data, page, limit]);
   const deleteMutation = useDeleteMemo();
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
