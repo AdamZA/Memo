@@ -28,7 +28,6 @@ export function MemoDetailsPage() {
     if (!id) return;
 
     try {
-      openConfirm();
       await deleteMutation.mutateAsync(id);
       closeConfirm();
       navigate('/');
