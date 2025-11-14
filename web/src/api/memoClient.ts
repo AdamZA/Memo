@@ -46,7 +46,7 @@ async function handleJson<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function listMemos(params: MemoListParams): Promise<MemoListResponse> {
+export async function listMemos(params: MemoListParams = {}): Promise<MemoListResponse> {
   const url = new URL(`${API_BASE_URL}/memos`);
   url.searchParams.set('page', String(params.page));
   url.searchParams.set('limit', String(params.limit));
