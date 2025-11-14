@@ -99,11 +99,11 @@ export function MemoDetailsPage() {
                   <th scope="row">Title</th>
                   <td>{data.title}</td>
                 </tr>
-                {/* you already moved Body up here, leaving metadata below */}
+                {}
                 <tr>
                   <th scope="row">Body</th>
-                  <td className="memo-detail-body-cell">
-                    <p className="memo-detail-body">{data.body}</p>
+                  <td>
+                    <p>{data.body}</p>
                   </td>
                 </tr>
                 <tr>
