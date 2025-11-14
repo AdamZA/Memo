@@ -69,7 +69,6 @@ export default function App() {
     } catch (err) {
       console.error(err);
       setDeleteError('Unable to delete memo. Please try again.');
-      // keep dialog open so the user sees the error
     }
   }
 
