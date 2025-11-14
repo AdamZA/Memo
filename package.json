@@ -8,11 +8,14 @@
   "scripts": {
     "dev:api": "npm --workspace api run dev",
     "dev:web": "npm --workspace web run dev",
+    "dev": "npm run dev:api & npm run dev:web",
     "build:api": "npm --workspace api run build",
     "build:web": "npm --workspace web run build",
+    "build": "npm run build:api && npm run build:web",
     "test:api": "npm --workspace api run test",
     "test:web": "npm --workspace web run test",
     "test:all": "npm run test:api && npm run test:web",
+    "test": "npm run test:all",
     "prepare": "chmod +x .husky/* || true",
     "format": "prettier -w .",
     "format:check": "prettier -c .",
@@ -20,7 +23,9 @@
     "start:web": "npm --workspace web run start",
     "typecheck:api": "npm --workspace api run typecheck",
     "typecheck:web": "npm --workspace web run typecheck",
-    "typecheck:all": "npm run typecheck:api && npm run typecheck:web"
+    "typecheck:all": "npm run typecheck:api && npm run typecheck:web",
+    "typecheck": "npm run typecheck:all",
+    "verify": "npm run format:check && npm run typecheck:all && npm run test:all"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,css}": "prettier -c"

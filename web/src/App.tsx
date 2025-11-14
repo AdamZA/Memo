@@ -2,26 +2,30 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { useMemosList } from './hooks/useMemosList';
 import { DEBOUNCE_DELAY_MS, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT } from './constants/memoConstants';
+import { Link } from 'react-router-dom';
+import { useDeleteMemo } from './hooks/useMemoMutations';
+import { ConfirmDialog } from './ConfirmDialog';
 
 export default function App() {
   // Pagination state
   const [page, setPage] = useState(DEFAULT_PAGE);
   const [limit] = useState(DEFAULT_PAGE_LIMIT);
 
-  // Searches after short delay when user stops typing
+  // Debounced search state
   const [queryInput, setQueryInput] = useState('');
   const [query, setQuery] = useState('');
 
-  // Search after short pause
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Debounce search
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       setPage(DEFAULT_PAGE);
       setQuery(queryInput.trim());
     }, DEBOUNCE_DELAY_MS);
 
-    // Cleanup on new effect run
     return () => clearTimeout(debounceTimer);
-  }, [queryInput]); // Dependency on raw input
+  }, [queryInput]);
 
   const { data, isLoading, isError, error, isFetching } = useMemosList({
     page,
@@ -29,23 +33,44 @@ export default function App() {
     query,
   });
 
-  useEffect(() => {
-    if (!data) return;
-
-    const { total, limit } = data;
-    const maxPage = Math.max(1, Math.ceil(total / limit));
-
-    if (page > maxPage) {
-      // Intentionally synchronous to ensure refetch with valid page
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPage(1);
-    }
-  }, [data, page]);
-
   const total = data?.total ?? 0;
   const totalPages = total > 0 ? Math.ceil(total / limit) : 1;
   const canGoPrev = page > 1;
   const canGoNext = page < totalPages;
+
+  // Pagination edge case: reset page if current page exceeds max page
+  useEffect(() => {
+    if (!data) return;
+    const maxPage = Math.max(1, Math.ceil(data.total / limit));
+    if (page > maxPage) {
+      setPage(1);
+    }
+  }, [data, page, limit]);
+  const deleteMutation = useDeleteMemo();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  function openDeleteConfirm(id: string) {
+    setPendingDeleteId(id);
+    setDeleteError(null); // clear any previous error
+  }
+
+  function closeDeleteConfirm() {
+    setPendingDeleteId(null);
+    setDeleteError(null);
+  }
+
+  async function handleConfirmDelete() {
+    if (!pendingDeleteId) return;
+
+    try {
+      setDeleteError(null);
+      await deleteMutation.mutateAsync(pendingDeleteId);
+      closeDeleteConfirm();
+    } catch (err) {
+      console.error(err);
+      setDeleteError('Unable to delete memo. Please try again.');
+    }
+  }
 
   return (
     <div className="app-root">
@@ -54,6 +79,10 @@ export default function App() {
           <h1>Memo Dashboard</h1>
           <p className="app-subtitle">Search, browse and manage your memos.</p>
         </div>
+
+        <Link to="/memos/new" className="primary-button">
+          New Memo
+        </Link>
       </header>
 
       <section className="toolbar">
@@ -109,16 +138,39 @@ export default function App() {
                   <th>Version</th>
                   <th>Date Created</th>
                   <th>Date Updated</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data.data.map((memo) => (
                   <tr key={memo.id}>
-                    <td>{memo.title}</td>
+                    <td>
+                      <Link className="link-button" to={`/memos/${memo.id}`}>
+                        {memo.title}
+                      </Link>
+                    </td>
                     <td className="memo-body-cell">{memo.body}</td>
                     <td>{memo.version}</td>
                     <td>{new Date(memo.createdAt).toLocaleString()}</td>
                     <td>{new Date(memo.updatedAt).toLocaleString()}</td>
+                    <td>
+                      <div className="table-actions">
+                        <Link
+                          className="secondary-button table-action-button"
+                          to={`/memos/${memo.id}/edit`}
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          type="button"
+                          className="danger-button table-action-button"
+                          onClick={() => openDeleteConfirm(memo.id)}
+                          disabled={deleteMutation.isPending}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -146,6 +198,17 @@ export default function App() {
           </>
         )}
       </main>
+
+      <ConfirmDialog
+        open={pendingDeleteId !== null}
+        title="Delete memo"
+        message="Are you sure you want to delete this memo? This action cannot be undone."
+        confirmLabel="Delete memo"
+        cancelLabel="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={closeDeleteConfirm}
+        errorMessage={deleteError}
+      />
     </div>
   );
 }
