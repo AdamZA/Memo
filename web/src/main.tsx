@@ -16,8 +16,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/memos" element={<App />} />
-          <Route path="/memos/:id" element={<MemoDetailsPage />} />
           <Route path="/memos/new" element={<MemoEditorPage mode="create" />} />
+          <Route path="/memos/:id" element={<MemoDetailsPage />} />
           <Route path="/memos/:id/edit" element={<MemoEditorPage mode="edit" />} />
         </Routes>
       </BrowserRouter>
