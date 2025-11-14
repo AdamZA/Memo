@@ -212,5 +212,6 @@ This is the same validation process executed on every push.
 - Migrate UI styling to a more scalable system (styled-components)
 - Dockerize API + Web for easier deployment/scaling
 - Better error surfacing/handling for delete flow
+- Change ordering for memos listing, for newest -> latest factoring in pagination
 
 ---
