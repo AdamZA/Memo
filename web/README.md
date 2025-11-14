@@ -161,25 +161,3 @@ Once seeded, visit the UI at:
 The dashboard will automatically display the seeded memos.
 
 ---
-
-## Project structure (quick overview)
-
-```
-web/
-├── src/
-│   ├── api/
-│   │   └── memoClient.ts
-│   ├── hooks/
-│   │   ├── useMemosList.ts
-│   │   ├── useMemoDetails.ts
-│   │   └── useMemoMutations.ts
-│   ├── components/
-│   │   └── DeleteConfirmationModal.tsx
-│   ├── MemoEditorPage.tsx
-│   ├── MemoDetailsPage.tsx
-│   ├── App.tsx
-│   ├── App.css
-│   └── main.tsx
-└── test/
-    └── (Vitest test files)
-```
