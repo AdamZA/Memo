@@ -13,6 +13,7 @@ The UI is a simple memo dashboard that allows you to:
 - Delete memo
 
 > The UI expects the Memo API to be running on `http://localhost:3000`.
+> The UI will typically be hosted at `http://localhost:5173`
 
 ---
 

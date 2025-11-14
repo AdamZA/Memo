@@ -38,6 +38,9 @@ Run both API and Web together:
 npm run dev
 ```
 
+> The UI expects the Memo API to be running on `http://localhost:3000`.
+> The UI will typically be hosted at `http://localhost:5173`
+
 ---
 
 ## Building
