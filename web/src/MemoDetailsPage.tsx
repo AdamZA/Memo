@@ -99,7 +99,7 @@ export function MemoDetailsPage() {
                   <th scope="row">Title</th>
                   <td>{data.title}</td>
                 </tr>
-                {}
+                
                 <tr>
                   <th scope="row">Body</th>
                   <td>
