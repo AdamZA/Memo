@@ -39,10 +39,6 @@ export function MemoEditorPage({ mode }: MemoEditorPageProps) {
     const trimmedTitle = title.trim();
     const trimmedBody = body.trim();
 
-    if (!trimmedTitle || !trimmedBody) {
-      throw new Error('Title and body are required.');
-    }
-
     if (!isEdit) {
       await createMutation.mutateAsync({
         title: trimmedTitle,
