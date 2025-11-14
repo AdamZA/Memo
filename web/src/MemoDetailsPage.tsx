@@ -91,7 +91,7 @@ export function MemoDetailsPage() {
 
         {!isLoading && !isError && data && (
           <article className="memo-detail">
-            <h2 className="memo-detail-heading">Memo overview</h2>
+            <h2>Memo overview</h2>
 
             <table className="memo-detail-table">
               <tbody>
