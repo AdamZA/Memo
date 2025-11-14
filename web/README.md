@@ -180,6 +180,6 @@ web/
 │   ├── App.tsx
 │   ├── App.css
 │   └── main.tsx
-└── tests/
+└── test/
     └── (Vitest test files)
 ```
