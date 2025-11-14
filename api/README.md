@@ -51,28 +51,6 @@ Vitest and Supertest are used for testing.
 npm run test
 ```
 
----
-
-## Project Structure
-
-```
-api/
-  src/
-    index.ts               Entry point
-    server.ts              Express app creation
-    router.ts              Route definitions
-    controllers/           Request validation and response shaping
-    services/              Business logic
-    repositories/          Data persistence layer (Map datastore)
-    schemas/               Zod input validation
-    errors/                Error classes and middleware
-  test/
-    integration/           Supertest integration tests
-    unit/                  Unit tests for controllers/services/repo
-```
-
----
-
 ## Design Overview
 
 ### Startup Flow (index.ts)
@@ -80,7 +58,7 @@ api/
 1. Initialize the Map-based datastore
 2. Create repository instance
 3. Create service and inject repository
-4. Build controller layer
+4. Build controller layer using service
 5. Build router using controllers
 6. Apply global middleware (JSON body parsing, error handling)
 7. Start Express server
@@ -97,16 +75,6 @@ api/
 6. Service returns result to controller
 7. Controller constructs final JSON response
 8. Global middleware handles any thrown errors consistently
-
-### Why this design?
-
-The API follows a layered architecture (controller → service → repository) to:
-- Keep responsibilities isolated
-- Make business rules testable
-- Allow easy swapping of the repository for a real database later
-- Ensure strict validation and typed data flow end-to-end
-
----
 
 ## Seeding Data
 
@@ -135,59 +103,167 @@ done
 
 ## Endpoints Overview
 
-### Health Check
+## cURL references
+Health check:
 ```bash
-GET /health
+curl http://localhost:3000/health
 ```
-Example:
+Example response:
 ```json
 {"ok": true}
 ```
 
-### Create Memo
+Create memo:
 ```bash
-POST /memos
+curl -X POST http://localhost:3000/memos \
+  -H "Content-Type: application/json" \
+  -d '{"title":"My first memo","body":"Hello world"}'
 ```
-
-### List Memos
-```bash
-GET /memos
-```
-
-Supports pagination and search:
-```bash
-GET /memos?page=1&limit=2&query=hello
-```
-
-### Get Memo by ID
-```bash
-GET /memos/:id
-```
-
-### Update Memo
-```bash
-PUT /memos/:id
-```
-
-### Delete Memo
-```bash
-DELETE /memos/:id
-```
-
-### Invalid JSON example
-Returns:
+Example response:
 ```json
-{"error":"Invalid JSON"}
+{
+  "id": "N5PePgRbThar0eGkMNFio",
+  "title": "My first memo",
+  "body": "Hello world",
+  "createdAt": "2025-11-12T23:20:25.613Z",
+  "updatedAt": "2025-11-12T23:20:25.613Z",
+  "version": 1
+}
 ```
 
-### Not Found
+List memos:
+```bash
+curl http://localhost:3000/memos
+```
+Example response:
 ```json
-{"error":"Not Found"}
+{
+  "data": [
+    {
+      "id": "N5PePgRbThar0eGkMNFio",
+      "title": "My first memo",
+      "body": "Hello world",
+      "createdAt": "2025-11-12T23:20:25.613Z",
+      "updatedAt": "2025-11-12T23:20:25.613Z",
+      "version": 1
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 20
+}
 ```
 
-### Method Not Allowed
+List memos with query and pagination parameters:
+```bash
+curl "http://localhost:3000/memos?page=1&limit=2&query=hello"
+```
+Example response:
 ```json
-{"error":"Method Not Allowed"}
+{
+  "data": [
+    {
+      "id": "Vxn-pe4X36RWeoyeA6Ch1",
+      "title": "My first memo",
+      "body": "Hello world",
+      "createdAt": "2025-11-12T23:37:14.454Z",
+      "updatedAt": "2025-11-12T23:37:14.454Z",
+      "version": 1
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 2
+}
+```
+
+Get memo by ID:
+```bash
+curl http://localhost:3000/memos/{id}
+```
+Example response:
+```json
+{
+  "id": "N5PePgRbThar0eGkMNFio",
+  "title": "My first memo",
+  "body": "Hello world",
+  "createdAt": "2025-11-12T23:20:25.613Z",
+  "updatedAt": "2025-11-12T23:20:25.613Z",
+  "version": 1
+}
+```
+
+Update memo:
+```bash
+curl -X PUT http://localhost:3000/memos/{id} \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Updated title"}'
+```
+Example response:
+```json
+{
+  "id": "N5PePgRbThar0eGkMNFio",
+  "title": "Updated title",
+  "body": "Hello world",
+  "createdAt": "2025-11-12T23:20:25.613Z",
+  "updatedAt": "2025-11-12T23:26:00.361Z",
+  "version": 2
+}
+```
+
+Delete memo:
+```bash
+curl -X DELETE http://localhost:3000/memos/{id}
+```
+(No expected response)
+
+Invalid JSON payload:
+```bash
+curl -X POST http://localhost:3000/memos \
+ -H "Content-Type: application/json" \
+ -d '{"bad": "data"'
+```
+Example response:
+```json
+{
+  "error": "Invalid JSON"
+}
+```
+
+Unsupported path:
+```bash
+curl http://localhost:3000/does-not-exist
+```
+Example response:
+```json
+{
+  "error": "Not Found"
+}
+```
+
+Method not allowed (Included -i response to see Allowed headers)
+```bash
+curl -i -X DELETE http://localhost:3000/memos
+```
+Example response:
+```text
+HTTP/1.1 405 Method Not Allowed
+X-Powered-By: Express
+Access-Control-Allow-Origin: http://localhost:5173
+Vary: Origin
+Allow: GET, POST
+Content-Type: application/json; charset=utf-8
+Content-Length: 30
+ETag: W/"1e-IBweH4Vj7lDovJDf9KQOpDMeplg"
+Date: Wed, 12 Nov 2025 23:29:03 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+```
+
+```json
+{
+  "error": "Method Not Allowed"
+}
 ```
 
 ---
